@@ -2,8 +2,7 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#ifndef __C_OS_OPERATOR_H_INCLUDED__
-#define __C_OS_OPERATOR_H_INCLUDED__
+#pragma once
 
 #include "IOSOperator.h"
 
@@ -49,12 +48,11 @@ private:
 	core::stringc OperatingSystem;
 
 #if defined(_IRR_COMPILE_WITH_X11_DEVICE_)
-	CIrrDeviceLinux * IrrDeviceLinux;
+	CIrrDeviceLinux* IrrDeviceLinux;
 #endif
 
 };
 
 } // end namespace
 
-#endif
 

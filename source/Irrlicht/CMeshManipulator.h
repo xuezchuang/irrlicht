@@ -2,8 +2,7 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#ifndef __C_MESH_MANIPULATOR_H_INCLUDED__
-#define __C_MESH_MANIPULATOR_H_INCLUDED__
+#pragma once
 
 #include "IMeshManipulator.h"
 
@@ -43,10 +42,10 @@ public:
 	\param resolution: resolution of the planar mapping. This is the value
 	specifying which is the relation between world space and
 	texture coordinate space. */
-	virtual void makePlanarTextureMapping(scene::IMesh* mesh, f32 resolution=0.001f) const _IRR_OVERRIDE_;
+	virtual void makePlanarTextureMapping(scene::IMesh* mesh, f32 resolution = 0.001f) const _IRR_OVERRIDE_;
 
 	//! Creates a planar texture mapping on the meshbuffer
-	virtual void makePlanarTextureMapping(scene::IMeshBuffer* meshbuffer, f32 resolution=0.001f) const _IRR_OVERRIDE_;
+	virtual void makePlanarTextureMapping(scene::IMeshBuffer* meshbuffer, f32 resolution = 0.001f) const _IRR_OVERRIDE_;
 
 	//! Creates a planar texture mapping on the meshbuffer
 	void makePlanarTextureMapping(scene::IMeshBuffer* buffer, f32 resolutionS, f32 resolutionT, u8 axis, const core::vector3df& offset) const _IRR_OVERRIDE_;
@@ -55,13 +54,13 @@ public:
 	void makePlanarTextureMapping(scene::IMesh* mesh, f32 resolutionS, f32 resolutionT, u8 axis, const core::vector3df& offset) const _IRR_OVERRIDE_;
 
 	//! Recalculates tangents, requires a tangent mesh buffer
-	virtual void recalculateTangents(IMeshBuffer* buffer, bool recalculateNormals=false, bool smooth=false, bool angleWeighted=false) const _IRR_OVERRIDE_;
+	virtual void recalculateTangents(IMeshBuffer* buffer, bool recalculateNormals = false, bool smooth = false, bool angleWeighted = false) const _IRR_OVERRIDE_;
 
 	//! Recalculates tangents, requires a tangent mesh
-	virtual void recalculateTangents(IMesh* mesh, bool recalculateNormals=false, bool smooth=false, bool angleWeighted=false) const _IRR_OVERRIDE_;
+	virtual void recalculateTangents(IMesh* mesh, bool recalculateNormals = false, bool smooth = false, bool angleWeighted = false) const _IRR_OVERRIDE_;
 
 	//! Creates a copy of the mesh, which will only consist of S3DVertexTangents vertices.
-	virtual IMesh* createMeshWithTangents(IMesh* mesh, bool recalculateNormals=false, bool smooth=false, bool angleWeighted=false, bool recalculateTangents=true) const _IRR_OVERRIDE_;
+	virtual IMesh* createMeshWithTangents(IMesh* mesh, bool recalculateNormals = false, bool smooth = false, bool angleWeighted = false, bool recalculateTangents = true) const _IRR_OVERRIDE_;
 
 	//! Creates a copy of the mesh, which will only consist of S3D2TCoords vertices.
 	virtual IMesh* createMeshWith2TCoords(IMesh* mesh) const _IRR_OVERRIDE_;
@@ -73,7 +72,7 @@ public:
 	virtual IMesh* createMeshUniquePrimitives(IMesh* mesh) const _IRR_OVERRIDE_;
 
 	//! Creates a copy of the mesh, which will have all duplicated vertices removed, i.e. maximal amount of vertices are shared via indexing.
-	virtual IMesh* createMeshWelded(IMesh *mesh, f32 tolerance=core::ROUNDING_ERROR_f32) const _IRR_OVERRIDE_;
+	virtual IMesh* createMeshWelded(IMesh* mesh, f32 tolerance = core::ROUNDING_ERROR_f32) const _IRR_OVERRIDE_;
 
 	//! Returns amount of polygons in mesh.
 	virtual s32 getPolyCount(scene::IMesh* mesh) const _IRR_OVERRIDE_;
@@ -82,20 +81,19 @@ public:
 	virtual s32 getPolyCount(scene::IAnimatedMesh* mesh) const _IRR_OVERRIDE_;
 
 	//! create a new AnimatedMesh and adds the mesh to it
-	virtual IAnimatedMesh * createAnimatedMesh(scene::IMesh* mesh,scene::E_ANIMATED_MESH_TYPE type) const _IRR_OVERRIDE_;
+	virtual IAnimatedMesh* createAnimatedMesh(scene::IMesh* mesh, scene::E_ANIMATED_MESH_TYPE type) const _IRR_OVERRIDE_;
 
 	//! create a mesh optimized for the vertex cache
-	virtual IMesh* createForsythOptimizedMesh(const scene::IMesh *mesh) const _IRR_OVERRIDE_;
+	virtual IMesh* createForsythOptimizedMesh(const scene::IMesh* mesh) const _IRR_OVERRIDE_;
 
 	//! Optimizes the mesh using an algorithm tuned for heightmaps
-	virtual void heightmapOptimizeMesh(IMesh * const m, const f32 tolerance = core::ROUNDING_ERROR_f32) const _IRR_OVERRIDE_;
+	virtual void heightmapOptimizeMesh(IMesh* const m, const f32 tolerance = core::ROUNDING_ERROR_f32) const _IRR_OVERRIDE_;
 
 	//! Optimizes the mesh using an algorithm tuned for heightmaps
-	virtual void heightmapOptimizeMesh(IMeshBuffer * const m, const f32 tolerance = core::ROUNDING_ERROR_f32) const _IRR_OVERRIDE_;
+	virtual void heightmapOptimizeMesh(IMeshBuffer* const m, const f32 tolerance = core::ROUNDING_ERROR_f32) const _IRR_OVERRIDE_;
 };
 
 } // end namespace scene
 } // end namespace irr
 
 
-#endif

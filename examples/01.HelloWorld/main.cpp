@@ -126,9 +126,8 @@ int main()
 	Always check the return value to cope with unsupported drivers,
 	dimensions, etc.
 	*/
-	IrrlichtDevice *device =
-		createDevice( video::EDT_BURNINGSVIDEO, dimension2d<u32>(640, 480), 16,
-			false, false, false, 0);
+	//IrrlichtDevice* device = createDevice(video::EDT_BURNINGSVIDEO, dimension2d<u32>(640, 480), 16, false, false, false, 0);
+	IrrlichtDevice* device = createDevice(video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
 
 	if (!device)
 		return 1;
@@ -198,13 +197,21 @@ int main()
 	other supported file format. By the way, that cool Quake 2 model
 	called sydney was modeled by Brian Collins.
 	*/
-	IAnimatedMesh* mesh = smgr->getMesh(mediaPath + "sydney.md2");
-	if (!mesh)
+	//IAnimatedMesh* mesh = smgr->getMesh(mediaPath + "sydney.md2");
+	//if (!mesh)
+	//{
+	//	device->drop();
+	//	return 1;
+	//}
+	//IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
+
+	scene::ISceneNode* CubeNode = smgr->addCubeSceneNode(10);
+	if(CubeNode)
 	{
-		device->drop();
-		return 1;
+		//CubeNode->setPosition(core::vector3df(0, 0, 60));
+		CubeNode->setMaterialTexture(0, driver->getTexture(mediaPath + "wall.bmp"));
+		CubeNode->setMaterialFlag(video::EMF_LIGHTING, false);
 	}
-	IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
 
 	/*
 	To let the mesh look a little bit nicer, we change its material. We
@@ -214,12 +221,12 @@ int main()
 	texture to the mesh. Without it the mesh would be drawn using only a
 	color.
 	*/
-	if (node)
-	{
-		node->setMaterialFlag(EMF_LIGHTING, false);
-		node->setMD2Animation(scene::EMAT_STAND);
-		node->setMaterialTexture( 0, driver->getTexture(mediaPath + "sydney.bmp") );
-	}
+	//if (node)
+	//{
+	//	node->setMaterialFlag(EMF_LIGHTING, false);
+	//	node->setMD2Animation(scene::EMAT_STAND);
+	//	node->setMaterialTexture( 0, driver->getTexture(mediaPath + "sydney.bmp") );
+	//}
 
 	/*
 	To look at the mesh, we place a camera into 3d space at the position
@@ -247,7 +254,7 @@ int main()
 
 		smgr->drawAll();
 		guienv->drawAll();
-
+		
 		driver->endScene();
 	}
 

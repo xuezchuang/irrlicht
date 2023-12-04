@@ -117,18 +117,21 @@ bool CMainMenu::run()
 		true, true, aboutTab);
 
 	// add md2 model
-
-	scene::IAnimatedMesh* mesh = smgr->getMesh(mediaPath + "faerie.md2");
-	scene::IAnimatedMeshSceneNode* modelNode = smgr->addAnimatedMeshSceneNode(mesh);
-	if (modelNode)
+	if (1)
 	{
-		modelNode->setPosition( core::vector3df(0.f, 0.f, -5.f) );
-		modelNode->setMaterialTexture(0, driver->getTexture(mediaPath + "faerie2.bmp"));
-		modelNode->setMaterialFlag(video::EMF_LIGHTING, true);
-		modelNode->getMaterial(0).Shininess = 50.f;
-		modelNode->getMaterial(0).NormalizeNormals = true;
-		modelNode->setMD2Animation(scene::EMAT_STAND);
+		scene::IAnimatedMesh* mesh = smgr->getMesh(mediaPath + "faerie.md2");
+		scene::IAnimatedMeshSceneNode* modelNode = smgr->addAnimatedMeshSceneNode(mesh);
+		if (modelNode)
+		{
+			modelNode->setPosition(core::vector3df(0.f, 0.f, -5.f));
+			modelNode->setMaterialTexture(0, driver->getTexture(mediaPath + "faerie2.bmp"));
+			modelNode->setMaterialFlag(video::EMF_LIGHTING, true);
+			modelNode->getMaterial(0).Shininess = 50.f;
+			modelNode->getMaterial(0).NormalizeNormals = true;
+			modelNode->setMD2Animation(scene::EMAT_STAND);
+		}
 	}
+
 
 	// set ambient light (no sun light in the catacombs)
 	smgr->setAmbientLight( video::SColorf(0.2f, 0.2f, 0.2f) );
@@ -180,7 +183,7 @@ bool CMainMenu::run()
 					video::SColorf(0.8f, 0.f, 0.f, 0.0f), 30.0f);
 				// attach red billboard to the light
 				bill = smgr->addBillboardSceneNode(light, core::dimension2d<f32>(10, 10));
-				if ( bill )
+				if (bill)
 				{
 					bill->setMaterialFlag(video::EMF_LIGHTING, false);
 					bill->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);

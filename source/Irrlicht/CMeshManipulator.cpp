@@ -16,8 +16,8 @@ namespace scene
 {
 
 static inline core::vector3df getAngleWeight(const core::vector3df& v1,
-		const core::vector3df& v2,
-		const core::vector3df& v3)
+											 const core::vector3df& v2,
+											 const core::vector3df& v3)
 {
 	// Calculate this triangle's weight for each of its three vertices
 	// start by calculating the lengths of its sides
@@ -45,28 +45,28 @@ void CMeshManipulator::flipSurfaces(scene::IMesh* mesh) const
 		return;
 
 	const u32 bcount = mesh->getMeshBufferCount();
-	for (u32 b=0; b<bcount; ++b)
+	for (u32 b = 0; b < bcount; ++b)
 	{
 		IMeshBuffer* buffer = mesh->getMeshBuffer(b);
 		const u32 idxcnt = buffer->getIndexCount();
 		if (buffer->getIndexType() == video::EIT_16BIT)
 		{
 			u16* idx = buffer->getIndices();
-			for (u32 i=0; i<idxcnt; i+=3)
+			for (u32 i = 0; i < idxcnt; i += 3)
 			{
-				const u16 tmp = idx[i+1];
-				idx[i+1] = idx[i+2];
-				idx[i+2] = tmp;
+				const u16 tmp = idx[i + 1];
+				idx[i + 1] = idx[i + 2];
+				idx[i + 2] = tmp;
 			}
 		}
 		else
 		{
 			u32* idx = reinterpret_cast<u32*>(buffer->getIndices());
-			for (u32 i=0; i<idxcnt; i+=3)
+			for (u32 i = 0; i < idxcnt; i += 3)
 			{
-				const u32 tmp = idx[i+1];
-				idx[i+1] = idx[i+2];
-				idx[i+2] = tmp;
+				const u32 tmp = idx[i + 1];
+				idx[i + 1] = idx[i + 2];
+				idx[i + 2] = tmp;
 			}
 		}
 	}
@@ -84,41 +84,41 @@ void recalculateNormalsT(IMeshBuffer* buffer, bool smooth, bool angleWeighted)
 
 	if (!smooth)
 	{
-		for (u32 i=0; i<idxcnt; i+=3)
+		for (u32 i = 0; i < idxcnt; i += 3)
 		{
-			const core::vector3df& v1 = buffer->getPosition(idx[i+0]);
-			const core::vector3df& v2 = buffer->getPosition(idx[i+1]);
-			const core::vector3df& v3 = buffer->getPosition(idx[i+2]);
+			const core::vector3df& v1 = buffer->getPosition(idx[i + 0]);
+			const core::vector3df& v2 = buffer->getPosition(idx[i + 1]);
+			const core::vector3df& v3 = buffer->getPosition(idx[i + 2]);
 			const core::vector3df normal = core::plane3d<f32>(v1, v2, v3).Normal;
-			buffer->getNormal(idx[i+0]) = normal;
-			buffer->getNormal(idx[i+1]) = normal;
-			buffer->getNormal(idx[i+2]) = normal;
+			buffer->getNormal(idx[i + 0]) = normal;
+			buffer->getNormal(idx[i + 1]) = normal;
+			buffer->getNormal(idx[i + 2]) = normal;
 		}
 	}
 	else
 	{
 		u32 i;
 
-		for ( i = 0; i!= vtxcnt; ++i )
+		for (i = 0; i != vtxcnt; ++i)
 			buffer->getNormal(i).set(0.f, 0.f, 0.f);
 
-		for ( i=0; i<idxcnt; i+=3)
+		for (i = 0; i < idxcnt; i += 3)
 		{
-			const core::vector3df& v1 = buffer->getPosition(idx[i+0]);
-			const core::vector3df& v2 = buffer->getPosition(idx[i+1]);
-			const core::vector3df& v3 = buffer->getPosition(idx[i+2]);
+			const core::vector3df& v1 = buffer->getPosition(idx[i + 0]);
+			const core::vector3df& v2 = buffer->getPosition(idx[i + 1]);
+			const core::vector3df& v3 = buffer->getPosition(idx[i + 2]);
 			const core::vector3df normal = core::plane3d<f32>(v1, v2, v3).Normal;
 
-			core::vector3df weight(1.f,1.f,1.f);
+			core::vector3df weight(1.f, 1.f, 1.f);
 			if (angleWeighted)
-				weight = irr::scene::getAngleWeight(v1,v2,v3); // writing irr::scene:: necessary for borland
+				weight = irr::scene::getAngleWeight(v1, v2, v3); // writing irr::scene:: necessary for borland
 
-			buffer->getNormal(idx[i+0]) += weight.X*normal;
-			buffer->getNormal(idx[i+1]) += weight.Y*normal;
-			buffer->getNormal(idx[i+2]) += weight.Z*normal;
+			buffer->getNormal(idx[i + 0]) += weight.X * normal;
+			buffer->getNormal(idx[i + 1]) += weight.Y * normal;
+			buffer->getNormal(idx[i + 2]) += weight.Z * normal;
 		}
 
-		for ( i = 0; i!= vtxcnt; ++i )
+		for (i = 0; i != vtxcnt; ++i)
 			buffer->getNormal(i).normalize();
 	}
 }
@@ -132,7 +132,7 @@ void CMeshManipulator::recalculateNormals(IMeshBuffer* buffer, bool smooth, bool
 	if (!buffer)
 		return;
 
-	if (buffer->getIndexType()==video::EIT_16BIT)
+	if (buffer->getIndexType() == video::EIT_16BIT)
 		recalculateNormalsT<u16>(buffer, smooth, angleWeighted);
 	else
 		recalculateNormalsT<u32>(buffer, smooth, angleWeighted);
@@ -147,7 +147,7 @@ void CMeshManipulator::recalculateNormals(scene::IMesh* mesh, bool smooth, bool 
 		return;
 
 	const u32 bcount = mesh->getMeshBufferCount();
-	for ( u32 b=0; b<bcount; ++b)
+	for (u32 b = 0; b < bcount; ++b)
 		recalculateNormals(mesh->getMeshBuffer(b), smooth, angleWeighted);
 }
 
@@ -163,7 +163,7 @@ void calculateTangents(
 {
 	// choose one of them:
 	//#define USE_NVIDIA_GLH_VERSION // use version used by nvidia in glh headers
-	#define USE_IRR_VERSION
+#define USE_IRR_VERSION
 
 #ifdef USE_IRR_VERSION
 
@@ -199,16 +199,16 @@ void calculateTangents(
 
 #ifdef USE_NVIDIA_GLH_VERSION
 
-	tangent.set(0,0,0);
-	binormal.set(0,0,0);
+	tangent.set(0, 0, 0);
+	binormal.set(0, 0, 0);
 
 	core::vector3df v1(vt2.X - vt1.X, tc2.X - tc1.X, tc2.Y - tc1.Y);
 	core::vector3df v2(vt3.X - vt1.X, tc3.X - tc1.X, tc3.Y - tc1.Y);
 
 	core::vector3df txb = v1.crossProduct(v2);
-	if ( !core::iszero ( txb.X ) )
+	if (!core::iszero(txb.X))
 	{
-		tangent.X  = -txb.Y / txb.X;
+		tangent.X = -txb.Y / txb.X;
 		binormal.X = -txb.Z / txb.X;
 	}
 
@@ -216,9 +216,9 @@ void calculateTangents(
 	v2.X = vt3.Y - vt1.Y;
 	txb = v1.crossProduct(v2);
 
-	if ( !core::iszero ( txb.X ) )
+	if (!core::iszero(txb.X))
 	{
-		tangent.Y  = -txb.Y / txb.X;
+		tangent.Y = -txb.Y / txb.X;
 		binormal.Y = -txb.Z / txb.X;
 	}
 
@@ -226,9 +226,9 @@ void calculateTangents(
 	v2.X = vt3.Z - vt1.Z;
 	txb = v1.crossProduct(v2);
 
-	if ( !core::iszero ( txb.X ) )
+	if (!core::iszero(txb.X))
 	{
-		tangent.Z  = -txb.Y / txb.X;
+		tangent.Z = -txb.Y / txb.X;
 		binormal.Z = -txb.Z / txb.X;
 	}
 
@@ -243,7 +243,7 @@ void calculateTangents(
 
 	core::plane3d<f32> pl(vt1, vt2, vt3);
 
-	if(normal.dotProduct(pl.Normal) < 0.0f )
+	if (normal.dotProduct(pl.Normal) < 0.0f)
 		normal *= -1.0f;
 
 #endif // USE_NVIDIA_GLH_VERSION
@@ -254,7 +254,7 @@ void calculateTangents(
 template <typename T>
 void recalculateTangentsT(IMeshBuffer* buffer, bool recalculateNormals, bool smooth, bool angleWeighted)
 {
-	if (!buffer || (buffer->getVertexType()!= video::EVT_TANGENTS))
+	if (!buffer || (buffer->getVertexType() != video::EVT_TANGENTS))
 		return;
 
 	const u32 vtxCnt = buffer->getVertexCount();
@@ -268,21 +268,21 @@ void recalculateTangentsT(IMeshBuffer* buffer, bool recalculateNormals, bool smo
 	{
 		u32 i;
 
-		for ( i = 0; i!= vtxCnt; ++i )
+		for (i = 0; i != vtxCnt; ++i)
 		{
 			if (recalculateNormals)
-				v[i].Normal.set( 0.f, 0.f, 0.f );
-			v[i].Tangent.set( 0.f, 0.f, 0.f );
-			v[i].Binormal.set( 0.f, 0.f, 0.f );
+				v[i].Normal.set(0.f, 0.f, 0.f);
+			v[i].Tangent.set(0.f, 0.f, 0.f);
+			v[i].Binormal.set(0.f, 0.f, 0.f);
 		}
 
 		//Each vertex gets the sum of the tangents and binormals from the faces around it
-		for ( i=0; i<idxCnt; i+=3)
+		for (i = 0; i < idxCnt; i += 3)
 		{
 			// if this triangle is degenerate, skip it!
-			if (v[idx[i+0]].Pos == v[idx[i+1]].Pos ||
-				v[idx[i+0]].Pos == v[idx[i+2]].Pos ||
-				v[idx[i+1]].Pos == v[idx[i+2]].Pos
+			if (v[idx[i + 0]].Pos == v[idx[i + 1]].Pos ||
+				v[idx[i + 0]].Pos == v[idx[i + 2]].Pos ||
+				v[idx[i + 1]].Pos == v[idx[i + 2]].Pos
 				/*||
 				v[idx[i+0]].TCoords == v[idx[i+1]].TCoords ||
 				v[idx[i+0]].TCoords == v[idx[i+2]].TCoords ||
@@ -291,9 +291,9 @@ void recalculateTangentsT(IMeshBuffer* buffer, bool recalculateNormals, bool smo
 				continue;
 
 			//Angle-weighted normals look better, but are slightly more CPU intensive to calculate
-			core::vector3df weight(1.f,1.f,1.f);
+			core::vector3df weight(1.f, 1.f, 1.f);
 			if (angleWeighted)
-				weight = irr::scene::getAngleWeight(v[i+0].Pos,v[i+1].Pos,v[i+2].Pos);	// writing irr::scene:: necessary for borland
+				weight = irr::scene::getAngleWeight(v[i + 0].Pos, v[i + 1].Pos, v[i + 2].Pos);	// writing irr::scene:: necessary for borland
 			core::vector3df localNormal;
 			core::vector3df localTangent;
 			core::vector3df localBinormal;
@@ -302,58 +302,58 @@ void recalculateTangentsT(IMeshBuffer* buffer, bool recalculateNormals, bool smo
 				localNormal,
 				localTangent,
 				localBinormal,
-				v[idx[i+0]].Pos,
-				v[idx[i+1]].Pos,
-				v[idx[i+2]].Pos,
-				v[idx[i+0]].TCoords,
-				v[idx[i+1]].TCoords,
-				v[idx[i+2]].TCoords);
+				v[idx[i + 0]].Pos,
+				v[idx[i + 1]].Pos,
+				v[idx[i + 2]].Pos,
+				v[idx[i + 0]].TCoords,
+				v[idx[i + 1]].TCoords,
+				v[idx[i + 2]].TCoords);
 
 			if (recalculateNormals)
-				v[idx[i+0]].Normal += localNormal * weight.X;
-			v[idx[i+0]].Tangent += localTangent * weight.X;
-			v[idx[i+0]].Binormal += localBinormal * weight.X;
+				v[idx[i + 0]].Normal += localNormal * weight.X;
+			v[idx[i + 0]].Tangent += localTangent * weight.X;
+			v[idx[i + 0]].Binormal += localBinormal * weight.X;
 
 			calculateTangents(
 				localNormal,
 				localTangent,
 				localBinormal,
-				v[idx[i+1]].Pos,
-				v[idx[i+2]].Pos,
-				v[idx[i+0]].Pos,
-				v[idx[i+1]].TCoords,
-				v[idx[i+2]].TCoords,
-				v[idx[i+0]].TCoords);
+				v[idx[i + 1]].Pos,
+				v[idx[i + 2]].Pos,
+				v[idx[i + 0]].Pos,
+				v[idx[i + 1]].TCoords,
+				v[idx[i + 2]].TCoords,
+				v[idx[i + 0]].TCoords);
 
 			if (recalculateNormals)
-				v[idx[i+1]].Normal += localNormal * weight.Y;
-			v[idx[i+1]].Tangent += localTangent * weight.Y;
-			v[idx[i+1]].Binormal += localBinormal * weight.Y;
+				v[idx[i + 1]].Normal += localNormal * weight.Y;
+			v[idx[i + 1]].Tangent += localTangent * weight.Y;
+			v[idx[i + 1]].Binormal += localBinormal * weight.Y;
 
 			calculateTangents(
 				localNormal,
 				localTangent,
 				localBinormal,
-				v[idx[i+2]].Pos,
-				v[idx[i+0]].Pos,
-				v[idx[i+1]].Pos,
-				v[idx[i+2]].TCoords,
-				v[idx[i+0]].TCoords,
-				v[idx[i+1]].TCoords);
+				v[idx[i + 2]].Pos,
+				v[idx[i + 0]].Pos,
+				v[idx[i + 1]].Pos,
+				v[idx[i + 2]].TCoords,
+				v[idx[i + 0]].TCoords,
+				v[idx[i + 1]].TCoords);
 
 			if (recalculateNormals)
-				v[idx[i+2]].Normal += localNormal * weight.Z;
-			v[idx[i+2]].Tangent += localTangent * weight.Z;
-			v[idx[i+2]].Binormal += localBinormal * weight.Z;
+				v[idx[i + 2]].Normal += localNormal * weight.Z;
+			v[idx[i + 2]].Tangent += localTangent * weight.Z;
+			v[idx[i + 2]].Binormal += localBinormal * weight.Z;
 		}
 
 		// Normalize the tangents and binormals
 		if (recalculateNormals)
 		{
-			for ( i = 0; i!= vtxCnt; ++i )
+			for (i = 0; i != vtxCnt; ++i)
 				v[i].Normal.normalize();
 		}
-		for ( i = 0; i!= vtxCnt; ++i )
+		for (i = 0; i != vtxCnt; ++i)
 		{
 			v[i].Tangent.normalize();
 			v[i].Binormal.normalize();
@@ -362,46 +362,46 @@ void recalculateTangentsT(IMeshBuffer* buffer, bool recalculateNormals, bool smo
 	else
 	{
 		core::vector3df localNormal;
-		for (u32 i=0; i<idxCnt; i+=3)
+		for (u32 i = 0; i < idxCnt; i += 3)
 		{
 			calculateTangents(
 				localNormal,
-				v[idx[i+0]].Tangent,
-				v[idx[i+0]].Binormal,
-				v[idx[i+0]].Pos,
-				v[idx[i+1]].Pos,
-				v[idx[i+2]].Pos,
-				v[idx[i+0]].TCoords,
-				v[idx[i+1]].TCoords,
-				v[idx[i+2]].TCoords);
+				v[idx[i + 0]].Tangent,
+				v[idx[i + 0]].Binormal,
+				v[idx[i + 0]].Pos,
+				v[idx[i + 1]].Pos,
+				v[idx[i + 2]].Pos,
+				v[idx[i + 0]].TCoords,
+				v[idx[i + 1]].TCoords,
+				v[idx[i + 2]].TCoords);
 			if (recalculateNormals)
-				v[idx[i+0]].Normal=localNormal;
+				v[idx[i + 0]].Normal = localNormal;
 
 			calculateTangents(
 				localNormal,
-				v[idx[i+1]].Tangent,
-				v[idx[i+1]].Binormal,
-				v[idx[i+1]].Pos,
-				v[idx[i+2]].Pos,
-				v[idx[i+0]].Pos,
-				v[idx[i+1]].TCoords,
-				v[idx[i+2]].TCoords,
-				v[idx[i+0]].TCoords);
+				v[idx[i + 1]].Tangent,
+				v[idx[i + 1]].Binormal,
+				v[idx[i + 1]].Pos,
+				v[idx[i + 2]].Pos,
+				v[idx[i + 0]].Pos,
+				v[idx[i + 1]].TCoords,
+				v[idx[i + 2]].TCoords,
+				v[idx[i + 0]].TCoords);
 			if (recalculateNormals)
-				v[idx[i+1]].Normal=localNormal;
+				v[idx[i + 1]].Normal = localNormal;
 
 			calculateTangents(
 				localNormal,
-				v[idx[i+2]].Tangent,
-				v[idx[i+2]].Binormal,
-				v[idx[i+2]].Pos,
-				v[idx[i+0]].Pos,
-				v[idx[i+1]].Pos,
-				v[idx[i+2]].TCoords,
-				v[idx[i+0]].TCoords,
-				v[idx[i+1]].TCoords);
+				v[idx[i + 2]].Tangent,
+				v[idx[i + 2]].Binormal,
+				v[idx[i + 2]].Pos,
+				v[idx[i + 0]].Pos,
+				v[idx[i + 1]].Pos,
+				v[idx[i + 2]].TCoords,
+				v[idx[i + 0]].TCoords,
+				v[idx[i + 1]].TCoords);
 			if (recalculateNormals)
-				v[idx[i+2]].Normal=localNormal;
+				v[idx[i + 2]].Normal = localNormal;
 		}
 	}
 }
@@ -428,7 +428,7 @@ void CMeshManipulator::recalculateTangents(IMesh* mesh, bool recalculateNormals,
 		return;
 
 	const u32 meshBufferCount = mesh->getMeshBufferCount();
-	for (u32 b=0; b<meshBufferCount; ++b)
+	for (u32 b = 0; b < meshBufferCount; ++b)
 	{
 		recalculateTangents(mesh->getMeshBuffer(b), recalculateNormals, smooth, angleWeighted);
 	}
@@ -444,9 +444,9 @@ void makePlanarTextureMappingT(scene::IMeshBuffer* buffer, f32 resolution)
 	u32 idxcnt = buffer->getIndexCount();
 	T* idx = reinterpret_cast<T*>(buffer->getIndices());
 
-	for (u32 i=0; i<idxcnt; i+=3)
+	for (u32 i = 0; i < idxcnt; i += 3)
 	{
-		core::plane3df p(buffer->getPosition(idx[i+0]), buffer->getPosition(idx[i+1]), buffer->getPosition(idx[i+2]));
+		core::plane3df p(buffer->getPosition(idx[i + 0]), buffer->getPosition(idx[i + 1]), buffer->getPosition(idx[i + 2]));
 		p.Normal.X = fabsf(p.Normal.X);
 		p.Normal.Y = fabsf(p.Normal.Y);
 		p.Normal.Z = fabsf(p.Normal.Z);
@@ -454,29 +454,29 @@ void makePlanarTextureMappingT(scene::IMeshBuffer* buffer, f32 resolution)
 
 		if (p.Normal.X > p.Normal.Y && p.Normal.X > p.Normal.Z)
 		{
-			for (u32 o=0; o!=3; ++o)
+			for (u32 o = 0; o != 3; ++o)
 			{
-				buffer->getTCoords(idx[i+o]).X = buffer->getPosition(idx[i+o]).Y * resolution;
-				buffer->getTCoords(idx[i+o]).Y = buffer->getPosition(idx[i+o]).Z * resolution;
+				buffer->getTCoords(idx[i + o]).X = buffer->getPosition(idx[i + o]).Y * resolution;
+				buffer->getTCoords(idx[i + o]).Y = buffer->getPosition(idx[i + o]).Z * resolution;
 			}
 		}
 		else
-		if (p.Normal.Y > p.Normal.X && p.Normal.Y > p.Normal.Z)
-		{
-			for (u32 o=0; o!=3; ++o)
+			if (p.Normal.Y > p.Normal.X && p.Normal.Y > p.Normal.Z)
 			{
-				buffer->getTCoords(idx[i+o]).X = buffer->getPosition(idx[i+o]).X * resolution;
-				buffer->getTCoords(idx[i+o]).Y = buffer->getPosition(idx[i+o]).Z * resolution;
+				for (u32 o = 0; o != 3; ++o)
+				{
+					buffer->getTCoords(idx[i + o]).X = buffer->getPosition(idx[i + o]).X * resolution;
+					buffer->getTCoords(idx[i + o]).Y = buffer->getPosition(idx[i + o]).Z * resolution;
+				}
 			}
-		}
-		else
-		{
-			for (u32 o=0; o!=3; ++o)
+			else
 			{
-				buffer->getTCoords(idx[i+o]).X = buffer->getPosition(idx[i+o]).X * resolution;
-				buffer->getTCoords(idx[i+o]).Y = buffer->getPosition(idx[i+o]).Y * resolution;
+				for (u32 o = 0; o != 3; ++o)
+				{
+					buffer->getTCoords(idx[i + o]).X = buffer->getPosition(idx[i + o]).X * resolution;
+					buffer->getTCoords(idx[i + o]).Y = buffer->getPosition(idx[i + o]).Y * resolution;
+				}
 			}
-		}
 	}
 }
 }
@@ -488,7 +488,7 @@ void CMeshManipulator::makePlanarTextureMapping(scene::IMeshBuffer* buffer, f32 
 	if (!buffer)
 		return;
 
-	if (buffer->getIndexType()==video::EIT_16BIT)
+	if (buffer->getIndexType() == video::EIT_16BIT)
 		makePlanarTextureMappingT<u16>(buffer, resolution);
 	else
 		makePlanarTextureMappingT<u32>(buffer, resolution);
@@ -502,7 +502,7 @@ void CMeshManipulator::makePlanarTextureMapping(scene::IMesh* mesh, f32 resoluti
 		return;
 
 	const u32 bcount = mesh->getMeshBufferCount();
-	for ( u32 b=0; b<bcount; ++b)
+	for (u32 b = 0; b < bcount; ++b)
 	{
 		makePlanarTextureMapping(mesh->getMeshBuffer(b), resolution);
 	}
@@ -518,31 +518,31 @@ void makePlanarTextureMappingT(scene::IMeshBuffer* buffer, f32 resolutionS, f32 
 	u32 idxcnt = buffer->getIndexCount();
 	T* idx = reinterpret_cast<T*>(buffer->getIndices());
 
-	for (u32 i=0; i<idxcnt; i+=3)
+	for (u32 i = 0; i < idxcnt; i += 3)
 	{
 		// calculate planar mapping worldspace coordinates
-		if (axis==0)
+		if (axis == 0)
 		{
-			for (u32 o=0; o!=3; ++o)
+			for (u32 o = 0; o != 3; ++o)
 			{
-				buffer->getTCoords(idx[i+o]).X = 0.5f+(buffer->getPosition(idx[i+o]).Z + offset.Z) * resolutionS;
-				buffer->getTCoords(idx[i+o]).Y = 0.5f-(buffer->getPosition(idx[i+o]).Y + offset.Y) * resolutionT;
+				buffer->getTCoords(idx[i + o]).X = 0.5f + (buffer->getPosition(idx[i + o]).Z + offset.Z) * resolutionS;
+				buffer->getTCoords(idx[i + o]).Y = 0.5f - (buffer->getPosition(idx[i + o]).Y + offset.Y) * resolutionT;
 			}
 		}
-		else if (axis==1)
+		else if (axis == 1)
 		{
-			for (u32 o=0; o!=3; ++o)
+			for (u32 o = 0; o != 3; ++o)
 			{
-				buffer->getTCoords(idx[i+o]).X = 0.5f+(buffer->getPosition(idx[i+o]).X + offset.X) * resolutionS;
-				buffer->getTCoords(idx[i+o]).Y = 1.f-(buffer->getPosition(idx[i+o]).Z + offset.Z) * resolutionT;
+				buffer->getTCoords(idx[i + o]).X = 0.5f + (buffer->getPosition(idx[i + o]).X + offset.X) * resolutionS;
+				buffer->getTCoords(idx[i + o]).Y = 1.f - (buffer->getPosition(idx[i + o]).Z + offset.Z) * resolutionT;
 			}
 		}
-		else if (axis==2)
+		else if (axis == 2)
 		{
-			for (u32 o=0; o!=3; ++o)
+			for (u32 o = 0; o != 3; ++o)
 			{
-				buffer->getTCoords(idx[i+o]).X = 0.5f+(buffer->getPosition(idx[i+o]).X + offset.X) * resolutionS;
-				buffer->getTCoords(idx[i+o]).Y = 0.5f-(buffer->getPosition(idx[i+o]).Y + offset.Y) * resolutionT;
+				buffer->getTCoords(idx[i + o]).X = 0.5f + (buffer->getPosition(idx[i + o]).X + offset.X) * resolutionS;
+				buffer->getTCoords(idx[i + o]).Y = 0.5f - (buffer->getPosition(idx[i + o]).Y + offset.Y) * resolutionT;
 			}
 		}
 	}
@@ -556,7 +556,7 @@ void CMeshManipulator::makePlanarTextureMapping(scene::IMeshBuffer* buffer, f32 
 	if (!buffer)
 		return;
 
-	if (buffer->getIndexType()==video::EIT_16BIT)
+	if (buffer->getIndexType() == video::EIT_16BIT)
 		makePlanarTextureMappingT<u16>(buffer, resolutionS, resolutionT, axis, offset);
 	else
 		makePlanarTextureMappingT<u32>(buffer, resolutionS, resolutionT, axis, offset);
@@ -570,7 +570,7 @@ void CMeshManipulator::makePlanarTextureMapping(scene::IMesh* mesh, f32 resoluti
 		return;
 
 	const u32 bcount = mesh->getMeshBufferCount();
-	for ( u32 b=0; b<bcount; ++b)
+	for (u32 b = 0; b < bcount; ++b)
 	{
 		makePlanarTextureMapping(mesh->getMeshBuffer(b), resolutionS, resolutionT, axis, offset);
 	}
@@ -588,65 +588,65 @@ SMesh* CMeshManipulator::createMeshCopy(scene::IMesh* mesh) const
 
 	const u32 meshBufferCount = mesh->getMeshBufferCount();
 
-	for ( u32 b=0; b<meshBufferCount; ++b)
+	for (u32 b = 0; b < meshBufferCount; ++b)
 	{
 		const IMeshBuffer* const mb = mesh->getMeshBuffer(b);
-		switch(mb->getVertexType())
+		switch (mb->getVertexType())
 		{
 		case video::EVT_STANDARD:
-			{
-				SMeshBuffer* buffer = new SMeshBuffer();
-				buffer->Material = mb->getMaterial();
-				const u32 vcount = mb->getVertexCount();
-				buffer->Vertices.reallocate(vcount);
-				video::S3DVertex* vertices = (video::S3DVertex*)mb->getVertices();
-				for (u32 i=0; i < vcount; ++i)
-					buffer->Vertices.push_back(vertices[i]);
-				const u32 icount = mb->getIndexCount();
-				buffer->Indices.reallocate(icount);
-				const u16* indices = mb->getIndices();
-				for (u32 i=0; i < icount; ++i)
-					buffer->Indices.push_back(indices[i]);
-				clone->addMeshBuffer(buffer);
-				buffer->drop();
-			}
-			break;
+		{
+			SMeshBuffer* buffer = new SMeshBuffer();
+			buffer->Material = mb->getMaterial();
+			const u32 vcount = mb->getVertexCount();
+			buffer->Vertices.reallocate(vcount);
+			video::S3DVertex* vertices = (video::S3DVertex*)mb->getVertices();
+			for (u32 i = 0; i < vcount; ++i)
+				buffer->Vertices.push_back(vertices[i]);
+			const u32 icount = mb->getIndexCount();
+			buffer->Indices.reallocate(icount);
+			const u16* indices = mb->getIndices();
+			for (u32 i = 0; i < icount; ++i)
+				buffer->Indices.push_back(indices[i]);
+			clone->addMeshBuffer(buffer);
+			buffer->drop();
+		}
+		break;
 		case video::EVT_2TCOORDS:
-			{
-				SMeshBufferLightMap* buffer = new SMeshBufferLightMap();
-				buffer->Material = mb->getMaterial();
-				const u32 vcount = mb->getVertexCount();
-				buffer->Vertices.reallocate(vcount);
-				video::S3DVertex2TCoords* vertices = (video::S3DVertex2TCoords*)mb->getVertices();
-				for (u32 i=0; i < vcount; ++i)
-					buffer->Vertices.push_back(vertices[i]);
-				const u32 icount = mb->getIndexCount();
-				buffer->Indices.reallocate(icount);
-				const u16* indices = mb->getIndices();
-				for (u32 i=0; i < icount; ++i)
-					buffer->Indices.push_back(indices[i]);
-				clone->addMeshBuffer(buffer);
-				buffer->drop();
-			}
-			break;
+		{
+			SMeshBufferLightMap* buffer = new SMeshBufferLightMap();
+			buffer->Material = mb->getMaterial();
+			const u32 vcount = mb->getVertexCount();
+			buffer->Vertices.reallocate(vcount);
+			video::S3DVertex2TCoords* vertices = (video::S3DVertex2TCoords*)mb->getVertices();
+			for (u32 i = 0; i < vcount; ++i)
+				buffer->Vertices.push_back(vertices[i]);
+			const u32 icount = mb->getIndexCount();
+			buffer->Indices.reallocate(icount);
+			const u16* indices = mb->getIndices();
+			for (u32 i = 0; i < icount; ++i)
+				buffer->Indices.push_back(indices[i]);
+			clone->addMeshBuffer(buffer);
+			buffer->drop();
+		}
+		break;
 		case video::EVT_TANGENTS:
-			{
-				SMeshBufferTangents* buffer = new SMeshBufferTangents();
-				buffer->Material = mb->getMaterial();
-				const u32 vcount = mb->getVertexCount();
-				buffer->Vertices.reallocate(vcount);
-				video::S3DVertexTangents* vertices = (video::S3DVertexTangents*)mb->getVertices();
-				for (u32 i=0; i < vcount; ++i)
-					buffer->Vertices.push_back(vertices[i]);
-				const u32 icount = mb->getIndexCount();
-				buffer->Indices.reallocate(icount);
-				const u16* indices = mb->getIndices();
-				for (u32 i=0; i < icount; ++i)
-					buffer->Indices.push_back(indices[i]);
-				clone->addMeshBuffer(buffer);
-				buffer->drop();
-			}
-			break;
+		{
+			SMeshBufferTangents* buffer = new SMeshBufferTangents();
+			buffer->Material = mb->getMaterial();
+			const u32 vcount = mb->getVertexCount();
+			buffer->Vertices.reallocate(vcount);
+			video::S3DVertexTangents* vertices = (video::S3DVertexTangents*)mb->getVertices();
+			for (u32 i = 0; i < vcount; ++i)
+				buffer->Vertices.push_back(vertices[i]);
+			const u32 icount = mb->getIndexCount();
+			buffer->Indices.reallocate(icount);
+			const u16* indices = mb->getIndices();
+			for (u32 i = 0; i < icount; ++i)
+				buffer->Indices.push_back(indices[i]);
+			clone->addMeshBuffer(buffer);
+			buffer->drop();
+		}
+		break;
 		}// end switch
 
 	}// end for all mesh buffers
@@ -667,91 +667,91 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 
 	const u32 meshBufferCount = mesh->getMeshBufferCount();
 
-	for ( u32 b=0; b<meshBufferCount; ++b)
+	for (u32 b = 0; b < meshBufferCount; ++b)
 	{
 		const IMeshBuffer* const mb = mesh->getMeshBuffer(b);
 		const s32 idxCnt = mb->getIndexCount();
 		const u16* idx = mb->getIndices();
 
-		switch(mb->getVertexType())
+		switch (mb->getVertexType())
 		{
 		case video::EVT_STANDARD:
+		{
+			SMeshBuffer* buffer = new SMeshBuffer();
+			buffer->Material = mb->getMaterial();
+
+			video::S3DVertex* v =
+				(video::S3DVertex*)mb->getVertices();
+
+			buffer->Vertices.reallocate(idxCnt);
+			buffer->Indices.reallocate(idxCnt);
+			for (s32 i = 0; i < idxCnt; i += 3)
 			{
-				SMeshBuffer* buffer = new SMeshBuffer();
-				buffer->Material = mb->getMaterial();
+				buffer->Vertices.push_back(v[idx[i + 0]]);
+				buffer->Vertices.push_back(v[idx[i + 1]]);
+				buffer->Vertices.push_back(v[idx[i + 2]]);
 
-				video::S3DVertex* v =
-					(video::S3DVertex*)mb->getVertices();
-
-				buffer->Vertices.reallocate(idxCnt);
-				buffer->Indices.reallocate(idxCnt);
-				for (s32 i=0; i<idxCnt; i += 3)
-				{
-					buffer->Vertices.push_back( v[idx[i + 0 ]] );
-					buffer->Vertices.push_back( v[idx[i + 1 ]] );
-					buffer->Vertices.push_back( v[idx[i + 2 ]] );
-
-					buffer->Indices.push_back( i + 0 );
-					buffer->Indices.push_back( i + 1 );
-					buffer->Indices.push_back( i + 2 );
-				}
-
-				buffer->setBoundingBox(mb->getBoundingBox());
-				clone->addMeshBuffer(buffer);
-				buffer->drop();
+				buffer->Indices.push_back(i + 0);
+				buffer->Indices.push_back(i + 1);
+				buffer->Indices.push_back(i + 2);
 			}
-			break;
+
+			buffer->setBoundingBox(mb->getBoundingBox());
+			clone->addMeshBuffer(buffer);
+			buffer->drop();
+		}
+		break;
 		case video::EVT_2TCOORDS:
+		{
+			SMeshBufferLightMap* buffer = new SMeshBufferLightMap();
+			buffer->Material = mb->getMaterial();
+
+			video::S3DVertex2TCoords* v =
+				(video::S3DVertex2TCoords*)mb->getVertices();
+
+			buffer->Vertices.reallocate(idxCnt);
+			buffer->Indices.reallocate(idxCnt);
+			for (s32 i = 0; i < idxCnt; i += 3)
 			{
-				SMeshBufferLightMap* buffer = new SMeshBufferLightMap();
-				buffer->Material = mb->getMaterial();
+				buffer->Vertices.push_back(v[idx[i + 0]]);
+				buffer->Vertices.push_back(v[idx[i + 1]]);
+				buffer->Vertices.push_back(v[idx[i + 2]]);
 
-				video::S3DVertex2TCoords* v =
-					(video::S3DVertex2TCoords*)mb->getVertices();
-
-				buffer->Vertices.reallocate(idxCnt);
-				buffer->Indices.reallocate(idxCnt);
-				for (s32 i=0; i<idxCnt; i += 3)
-				{
-					buffer->Vertices.push_back( v[idx[i + 0 ]] );
-					buffer->Vertices.push_back( v[idx[i + 1 ]] );
-					buffer->Vertices.push_back( v[idx[i + 2 ]] );
-
-					buffer->Indices.push_back( i + 0 );
-					buffer->Indices.push_back( i + 1 );
-					buffer->Indices.push_back( i + 2 );
-				}
-				buffer->setBoundingBox(mb->getBoundingBox());
-				clone->addMeshBuffer(buffer);
-				buffer->drop();
+				buffer->Indices.push_back(i + 0);
+				buffer->Indices.push_back(i + 1);
+				buffer->Indices.push_back(i + 2);
 			}
-			break;
+			buffer->setBoundingBox(mb->getBoundingBox());
+			clone->addMeshBuffer(buffer);
+			buffer->drop();
+		}
+		break;
 		case video::EVT_TANGENTS:
+		{
+			SMeshBufferTangents* buffer = new SMeshBufferTangents();
+			buffer->Material = mb->getMaterial();
+
+			video::S3DVertexTangents* v =
+				(video::S3DVertexTangents*)mb->getVertices();
+
+			buffer->Vertices.reallocate(idxCnt);
+			buffer->Indices.reallocate(idxCnt);
+			for (s32 i = 0; i < idxCnt; i += 3)
 			{
-				SMeshBufferTangents* buffer = new SMeshBufferTangents();
-				buffer->Material = mb->getMaterial();
+				buffer->Vertices.push_back(v[idx[i + 0]]);
+				buffer->Vertices.push_back(v[idx[i + 1]]);
+				buffer->Vertices.push_back(v[idx[i + 2]]);
 
-				video::S3DVertexTangents* v =
-					(video::S3DVertexTangents*)mb->getVertices();
-
-				buffer->Vertices.reallocate(idxCnt);
-				buffer->Indices.reallocate(idxCnt);
-				for (s32 i=0; i<idxCnt; i += 3)
-				{
-					buffer->Vertices.push_back( v[idx[i + 0 ]] );
-					buffer->Vertices.push_back( v[idx[i + 1 ]] );
-					buffer->Vertices.push_back( v[idx[i + 2 ]] );
-
-					buffer->Indices.push_back( i + 0 );
-					buffer->Indices.push_back( i + 1 );
-					buffer->Indices.push_back( i + 2 );
-				}
-
-				buffer->setBoundingBox(mb->getBoundingBox());
-				clone->addMeshBuffer(buffer);
-				buffer->drop();
+				buffer->Indices.push_back(i + 0);
+				buffer->Indices.push_back(i + 1);
+				buffer->Indices.push_back(i + 2);
 			}
-			break;
+
+			buffer->setBoundingBox(mb->getBoundingBox());
+			clone->addMeshBuffer(buffer);
+			buffer->drop();
+		}
+		break;
 		}// end switch
 
 	}// end for all mesh buffers
@@ -763,14 +763,14 @@ IMesh* CMeshManipulator::createMeshUniquePrimitives(IMesh* mesh) const
 
 //! Creates a copy of a mesh, which will have identical vertices welded together
 // not yet 32bit
-IMesh* CMeshManipulator::createMeshWelded(IMesh *mesh, f32 tolerance) const
+IMesh* CMeshManipulator::createMeshWelded(IMesh* mesh, f32 tolerance) const
 {
 	SMesh* clone = new SMesh();
 	clone->BoundingBox = mesh->getBoundingBox();
 
 	core::array<u16> redirects;
 
-	for (u32 b=0; b<mesh->getMeshBufferCount(); ++b)
+	for (u32 b = 0; b < mesh->getMeshBufferCount(); ++b)
 	{
 		const IMeshBuffer* const mb = mesh->getMeshBuffer(b);
 		// reset redirect list
@@ -780,7 +780,7 @@ IMesh* CMeshManipulator::createMeshWelded(IMesh *mesh, f32 tolerance) const
 		u32 indexCount = 0;
 		core::array<u16>* outIdx = 0;
 
-		switch(mb->getVertexType())
+		switch (mb->getVertexType())
 		{
 		case video::EVT_STANDARD:
 		{
@@ -791,7 +791,7 @@ IMesh* CMeshManipulator::createMeshWelded(IMesh *mesh, f32 tolerance) const
 			buffer->drop();
 
 			video::S3DVertex* v =
-					(video::S3DVertex*)mb->getVertices();
+				(video::S3DVertex*)mb->getVertices();
 
 			u32 vertexCount = mb->getVertexCount();
 
@@ -801,15 +801,15 @@ IMesh* CMeshManipulator::createMeshWelded(IMesh *mesh, f32 tolerance) const
 
 			buffer->Vertices.reallocate(vertexCount);
 
-			for (u32 i=0; i < vertexCount; ++i)
+			for (u32 i = 0; i < vertexCount; ++i)
 			{
 				bool found = false;
-				for (u32 j=0; j < i; ++j)
+				for (u32 j = 0; j < i; ++j)
 				{
-					if ( v[i].Pos.equals( v[j].Pos, tolerance) &&
-						 v[i].Normal.equals( v[j].Normal, tolerance) &&
-						 v[i].TCoords.equals( v[j].TCoords ) &&
-						(v[i].Color == v[j].Color) )
+					if (v[i].Pos.equals(v[j].Pos, tolerance) &&
+						v[i].Normal.equals(v[j].Normal, tolerance) &&
+						v[i].TCoords.equals(v[j].TCoords) &&
+						(v[i].Color == v[j].Color))
 					{
 						redirects[i] = redirects[j];
 						found = true;
@@ -834,7 +834,7 @@ IMesh* CMeshManipulator::createMeshWelded(IMesh *mesh, f32 tolerance) const
 			buffer->drop();
 
 			video::S3DVertex2TCoords* v =
-					(video::S3DVertex2TCoords*)mb->getVertices();
+				(video::S3DVertex2TCoords*)mb->getVertices();
 
 			u32 vertexCount = mb->getVertexCount();
 
@@ -844,16 +844,16 @@ IMesh* CMeshManipulator::createMeshWelded(IMesh *mesh, f32 tolerance) const
 
 			buffer->Vertices.reallocate(vertexCount);
 
-			for (u32 i=0; i < vertexCount; ++i)
+			for (u32 i = 0; i < vertexCount; ++i)
 			{
 				bool found = false;
-				for (u32 j=0; j < i; ++j)
+				for (u32 j = 0; j < i; ++j)
 				{
-					if ( v[i].Pos.equals( v[j].Pos, tolerance) &&
-						 v[i].Normal.equals( v[j].Normal, tolerance) &&
-						 v[i].TCoords.equals( v[j].TCoords ) &&
-						 v[i].TCoords2.equals( v[j].TCoords2 ) &&
-						(v[i].Color == v[j].Color) )
+					if (v[i].Pos.equals(v[j].Pos, tolerance) &&
+						v[i].Normal.equals(v[j].Normal, tolerance) &&
+						v[i].TCoords.equals(v[j].TCoords) &&
+						v[i].TCoords2.equals(v[j].TCoords2) &&
+						(v[i].Color == v[j].Color))
 					{
 						redirects[i] = redirects[j];
 						found = true;
@@ -877,7 +877,7 @@ IMesh* CMeshManipulator::createMeshWelded(IMesh *mesh, f32 tolerance) const
 			buffer->drop();
 
 			video::S3DVertexTangents* v =
-					(video::S3DVertexTangents*)mb->getVertices();
+				(video::S3DVertexTangents*)mb->getVertices();
 
 			u32 vertexCount = mb->getVertexCount();
 
@@ -887,17 +887,17 @@ IMesh* CMeshManipulator::createMeshWelded(IMesh *mesh, f32 tolerance) const
 
 			buffer->Vertices.reallocate(vertexCount);
 
-			for (u32 i=0; i < vertexCount; ++i)
+			for (u32 i = 0; i < vertexCount; ++i)
 			{
 				bool found = false;
-				for (u32 j=0; j < i; ++j)
+				for (u32 j = 0; j < i; ++j)
 				{
-					if ( v[i].Pos.equals( v[j].Pos, tolerance) &&
-						 v[i].Normal.equals( v[j].Normal, tolerance) &&
-						 v[i].TCoords.equals( v[j].TCoords ) &&
-						 v[i].Tangent.equals( v[j].Tangent, tolerance ) &&
-						 v[i].Binormal.equals( v[j].Binormal, tolerance ) &&
-						(v[i].Color == v[j].Color) )
+					if (v[i].Pos.equals(v[j].Pos, tolerance) &&
+						v[i].Normal.equals(v[j].Normal, tolerance) &&
+						v[i].TCoords.equals(v[j].TCoords) &&
+						v[i].Tangent.equals(v[j].Tangent, tolerance) &&
+						v[i].Binormal.equals(v[j].Binormal, tolerance) &&
+						(v[i].Color == v[j].Color))
 					{
 						redirects[i] = redirects[j];
 						found = true;
@@ -918,15 +918,15 @@ IMesh* CMeshManipulator::createMeshWelded(IMesh *mesh, f32 tolerance) const
 		}
 
 		// Clean up any degenerate tris
- 		core::array<u16> &Indices = *outIdx;
+		core::array<u16>& Indices = *outIdx;
 		Indices.clear();
 		Indices.reallocate(indexCount);
-		for (u32 i = 0; i < indexCount; i+=3)
- 		{
+		for (u32 i = 0; i < indexCount; i += 3)
+		{
 			u16 a, b, c;
 			a = redirects[indices[i]];
-			b = redirects[indices[i+1]];
-			c = redirects[indices[i+2]];
+			b = redirects[indices[i + 1]];
+			c = redirects[indices[i + 2]];
 
 			bool drop = false;
 
@@ -960,7 +960,7 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh, bool recalculateNor
 	SMesh* clone = new SMesh();
 	const u32 meshBufferCount = mesh->getMeshBufferCount();
 
-	for (u32 b=0; b<meshBufferCount; ++b)
+	for (u32 b = 0; b < meshBufferCount; ++b)
 	{
 		const IMeshBuffer* const original = mesh->getMeshBuffer(b);
 		SMeshBufferTangents* buffer = new SMeshBufferTangents();
@@ -972,7 +972,7 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh, bool recalculateNor
 		const u32 idxCnt = original->getIndexCount();
 		const u16* indices = original->getIndices();
 		buffer->Indices.reallocate(idxCnt);
-		for (u32 i=0; i < idxCnt; ++i)
+		for (u32 i = 0; i < idxCnt; ++i)
 			buffer->Indices.push_back(indices[i]);
 
 		// copy vertices
@@ -980,34 +980,34 @@ IMesh* CMeshManipulator::createMeshWithTangents(IMesh* mesh, bool recalculateNor
 		buffer->Vertices.reallocate(vtxCnt);
 
 		const E_VERTEX_TYPE vType = original->getVertexType();
-		switch(vType)
+		switch (vType)
 		{
 		case video::EVT_STANDARD:
-			{
-				const S3DVertex* v = (const S3DVertex*)original->getVertices();
+		{
+			const S3DVertex* v = (const S3DVertex*)original->getVertices();
 
-				for (u32 i=0; i < vtxCnt; ++i)
-					buffer->Vertices.push_back( S3DVertexTangents(
-						v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords) );
-			}
-			break;
+			for (u32 i = 0; i < vtxCnt; ++i)
+				buffer->Vertices.push_back(S3DVertexTangents(
+					v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords));
+		}
+		break;
 		case video::EVT_2TCOORDS:
-			{
-				const S3DVertex2TCoords* v =(const S3DVertex2TCoords*)original->getVertices();
+		{
+			const S3DVertex2TCoords* v = (const S3DVertex2TCoords*)original->getVertices();
 
-				for (u32 i=0; i < vtxCnt; ++i)
-					buffer->Vertices.push_back( S3DVertexTangents(
-						v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords) );
-			}
-			break;
+			for (u32 i = 0; i < vtxCnt; ++i)
+				buffer->Vertices.push_back(S3DVertexTangents(
+					v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords));
+		}
+		break;
 		case video::EVT_TANGENTS:
-			{
-				const S3DVertexTangents* v =(const S3DVertexTangents*)original->getVertices();
+		{
+			const S3DVertexTangents* v = (const S3DVertexTangents*)original->getVertices();
 
-				for (u32 i=0; i < vtxCnt; ++i)
-					buffer->Vertices.push_back(v[i]);
-			}
-			break;
+			for (u32 i = 0; i < vtxCnt; ++i)
+				buffer->Vertices.push_back(v[i]);
+		}
+		break;
 		}
 		buffer->recalculateBoundingBox();
 
@@ -1043,20 +1043,20 @@ enum
 }
 
 //! Optimizes the mesh using an algorithm tuned for heightmaps.
-void CMeshManipulator::heightmapOptimizeMesh(IMesh * const m, const f32 tolerance) const
+void CMeshManipulator::heightmapOptimizeMesh(IMesh* const m, const f32 tolerance) const
 {
 	const u32 max = m->getMeshBufferCount();
 
 	for (u32 i = 0; i < max; i++)
 	{
-		IMeshBuffer * const mb = m->getMeshBuffer(i);
+		IMeshBuffer* const mb = m->getMeshBuffer(i);
 
 		heightmapOptimizeMesh(mb, tolerance);
 	}
 }
 
 //! Optimizes the mesh using an algorithm tuned for heightmaps.
-void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 tolerance) const
+void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer* const mb, const f32 tolerance) const
 {
 	using namespace core;
 	using namespace video;
@@ -1066,24 +1066,24 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 	const u32 idxs = mb->getIndexCount();
 	const u32 verts = mb->getVertexCount();
 
-	u16 *ind = mb->getIndices();
-	S3DVertex *vert = (S3DVertex *) mb->getVertices();
+	u16* ind = mb->getIndices();
+	S3DVertex* vert = (S3DVertex*)mb->getVertices();
 
 	// First an acceleration structure: given this vert, which triangles touch it?
 	// Using this drops two exponents off the algorightm complexity, O(n^4) > O(n^2)
 	// Other optimizations brought it down to O(n).
-	u32 **accel = (u32 **) malloc(verts * sizeof(u32 *));
+	u32** accel = (u32**)malloc(verts * sizeof(u32*));
 	for (u32 i = 0; i < verts; i++)
 	{
-		accel[i] = (u32 *) calloc(HEIGHT_TRIACCEL_MAX, sizeof(u32));
+		accel[i] = (u32*)calloc(HEIGHT_TRIACCEL_MAX, sizeof(u32));
 		for (u32 j = 0; j < HEIGHT_TRIACCEL_MAX; j++)
 		{
 			accel[i][j] = USHRT_MAX;
 		}
 	}
 
-	u16 *cur = (u16 *) calloc(verts, sizeof(u16));
-	for (u32 j = 0; j < idxs; j+=3)
+	u16* cur = (u16*)calloc(verts, sizeof(u16));
+	for (u32 j = 0; j < idxs; j += 3)
 	{
 		u32 v = ind[j];
 
@@ -1097,7 +1097,7 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 		cur[v]++;
 
 		// Unrolled tri loop, parts 2 and 3
-		v = ind[j+1];
+		v = ind[j + 1];
 
 		if (cur[v] >= HEIGHT_TRIACCEL_MAX)
 		{
@@ -1108,7 +1108,7 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 		accel[v][cur[v]] = j;
 		cur[v]++;
 
-		v = ind[j+2];
+		v = ind[j + 2];
 
 		if (cur[v] >= HEIGHT_TRIACCEL_MAX)
 		{
@@ -1124,7 +1124,7 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 	// Built, go
 	for (u32 i = 0; i < verts; i++)
 	{
-		const vector3df &mypos = vert[i].Pos;
+		const vector3df& mypos = vert[i].Pos;
 
 		// find all edges of this vert
 		edges.clear();
@@ -1139,25 +1139,25 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 			u32 far1 = -1, far2 = -1;
 			if (ind[j] == i)
 			{
-				far1 = ind[j+1];
-				far2 = ind[j+2];
+				far1 = ind[j + 1];
+				far2 = ind[j + 2];
 			}
-			else if (ind[j+1] == i)
+			else if (ind[j + 1] == i)
 			{
 				far1 = ind[j];
-				far2 = ind[j+2];
+				far2 = ind[j + 2];
 			}
-			else if (ind[j+2] == i)
+			else if (ind[j + 2] == i)
 			{
 				far1 = ind[j];
-				far2 = ind[j+1];
+				far2 = ind[j + 1];
 			}
 
 			// Skip degenerate tris
 			if (vert[i].Pos == vert[far1].Pos ||
 				vert[far1].Pos == vert[far2].Pos)
 			{
-//				puts("skipping degenerate tri");
+				//				puts("skipping degenerate tri");
 				continue;
 			}
 
@@ -1215,14 +1215,14 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 			}
 		}
 
-		almostnext:
+	almostnext:
 		if (gotonext)
 			continue;
 
 		// Edges found. Possible to simplify?
 
 		const u32 ecount = edges.size();
-//		printf("Vert %u has %u edges\n", i, ecount);
+		//		printf("Vert %u has %u edges\n", i, ecount);
 		for (u32 e = 0; e < ecount; e++)
 		{
 			for (u32 f = 0; f < ecount; f++)
@@ -1247,16 +1247,16 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 
 					if (edges[g].polycount != 2)
 					{
-//						printf("%u: polycount not 2 (%u)\n",
-//							g, edges[g].polycount);
+						//						printf("%u: polycount not 2 (%u)\n",
+						//							g, edges[g].polycount);
 						goto testnext;
 					}
 
 					// Normals must match
 					if (!edges[g].normal[0].equals(edges[g].normal[1],
-						tolerance))
+												   tolerance))
 					{
-//						puts("Normals don't match");
+						//						puts("Normals don't match");
 						goto testnext;
 					}
 
@@ -1279,7 +1279,7 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 								pos[y] = vert[edges[e].far].Pos;
 							}
 							else if (edges[g].polys[z] + y
-								== edges[e].far)
+									 == edges[e].far)
 							{
 								flat = true;
 								break;
@@ -1288,15 +1288,15 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 						if (!flat)
 						{
 							triangle3df temp(pos[0],
-								pos[1], pos[2]);
+											 pos[1], pos[2]);
 							vector3df N = temp.getNormal();
 							N.normalize();
-//							if (N.getLengthSQ() < 0.5f)
-//								puts("empty");
+							//							if (N.getLengthSQ() < 0.5f)
+							//								puts("empty");
 
 							if (!N.equals(edges[g].normal[z], tolerance))
 							{
-//								puts("wouldflip");
+								//								puts("wouldflip");
 								goto testnext;
 							}
 						}
@@ -1318,13 +1318,13 @@ void CMeshManipulator::heightmapOptimizeMesh(IMeshBuffer * const mb, const f32 t
 
 				// OK, moving to welding position
 				vert[i] = vert[edges[e].far];
-//				printf("Contracted vert %u to %u\n",
-//					i, edges[e].far);
+				//				printf("Contracted vert %u to %u\n",
+				//					i, edges[e].far);
 			}
 		}
 
 
-		testnext:;
+	testnext:;
 	}
 
 donehere:
@@ -1349,7 +1349,7 @@ IMesh* CMeshManipulator::createMeshWith2TCoords(IMesh* mesh) const
 	SMesh* clone = new SMesh();
 	const u32 meshBufferCount = mesh->getMeshBufferCount();
 
-	for (u32 b=0; b<meshBufferCount; ++b)
+	for (u32 b = 0; b < meshBufferCount; ++b)
 	{
 		const IMeshBuffer* const original = mesh->getMeshBuffer(b);
 		SMeshBufferLightMap* buffer = new SMeshBufferLightMap();
@@ -1361,7 +1361,7 @@ IMesh* CMeshManipulator::createMeshWith2TCoords(IMesh* mesh) const
 		const u32 idxCnt = original->getIndexCount();
 		const u16* indices = original->getIndices();
 		buffer->Indices.reallocate(idxCnt);
-		for (u32 i=0; i < idxCnt; ++i)
+		for (u32 i = 0; i < idxCnt; ++i)
 			buffer->Indices.push_back(indices[i]);
 
 		// copy vertices
@@ -1369,33 +1369,33 @@ IMesh* CMeshManipulator::createMeshWith2TCoords(IMesh* mesh) const
 		buffer->Vertices.reallocate(vtxCnt);
 
 		const video::E_VERTEX_TYPE vType = original->getVertexType();
-		switch(vType)
+		switch (vType)
 		{
 		case video::EVT_STANDARD:
-			{
-				const S3DVertex* v = (const S3DVertex*)original->getVertices();
+		{
+			const S3DVertex* v = (const S3DVertex*)original->getVertices();
 
-				for (u32 i=0; i < vtxCnt; ++i)
-					buffer->Vertices.push_back( video::S3DVertex2TCoords(
-						v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords, v[i].TCoords));
-			}
-			break;
+			for (u32 i = 0; i < vtxCnt; ++i)
+				buffer->Vertices.push_back(video::S3DVertex2TCoords(
+					v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords, v[i].TCoords));
+		}
+		break;
 		case video::EVT_2TCOORDS:
-			{
-				const S3DVertex2TCoords* v =(const S3DVertex2TCoords*)original->getVertices();
-				for (u32 i=0; i < vtxCnt; ++i)
-					buffer->Vertices.push_back(v[i]);
-			}
-			break;
+		{
+			const S3DVertex2TCoords* v = (const S3DVertex2TCoords*)original->getVertices();
+			for (u32 i = 0; i < vtxCnt; ++i)
+				buffer->Vertices.push_back(v[i]);
+		}
+		break;
 		case video::EVT_TANGENTS:
-			{
-				const S3DVertexTangents* v =(const S3DVertexTangents*)original->getVertices();
+		{
+			const S3DVertexTangents* v = (const S3DVertexTangents*)original->getVertices();
 
-				for (u32 i=0; i < vtxCnt; ++i)
-					buffer->Vertices.push_back( S3DVertex2TCoords(
-						v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords, v[i].TCoords) );
-			}
-			break;
+			for (u32 i = 0; i < vtxCnt; ++i)
+				buffer->Vertices.push_back(S3DVertex2TCoords(
+					v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords, v[i].TCoords));
+		}
+		break;
 		}
 		buffer->recalculateBoundingBox();
 
@@ -1422,7 +1422,7 @@ IMesh* CMeshManipulator::createMeshWith1TCoords(IMesh* mesh) const
 	SMesh* clone = new SMesh();
 	const u32 meshBufferCount = mesh->getMeshBufferCount();
 
-	for (u32 b=0; b<meshBufferCount; ++b)
+	for (u32 b = 0; b < meshBufferCount; ++b)
 	{
 		const IMeshBuffer* const original = mesh->getMeshBuffer(b);
 		SMeshBuffer* buffer = new SMeshBuffer();
@@ -1434,7 +1434,7 @@ IMesh* CMeshManipulator::createMeshWith1TCoords(IMesh* mesh) const
 		const u32 idxCnt = original->getIndexCount();
 		const u16* indices = original->getIndices();
 		buffer->Indices.reallocate(idxCnt);
-		for (u32 i=0; i < idxCnt; ++i)
+		for (u32 i = 0; i < idxCnt; ++i)
 			buffer->Indices.push_back(indices[i]);
 
 		// copy vertices
@@ -1442,34 +1442,34 @@ IMesh* CMeshManipulator::createMeshWith1TCoords(IMesh* mesh) const
 		buffer->Vertices.reallocate(vtxCnt);
 
 		const video::E_VERTEX_TYPE vType = original->getVertexType();
-		switch(vType)
+		switch (vType)
 		{
 		case video::EVT_STANDARD:
-			{
-				const S3DVertex* v = (const S3DVertex*)original->getVertices();
+		{
+			const S3DVertex* v = (const S3DVertex*)original->getVertices();
 
-				for (u32 i=0; i < vtxCnt; ++i)
-					buffer->Vertices.push_back( v[i] );
-			}
-			break;
+			for (u32 i = 0; i < vtxCnt; ++i)
+				buffer->Vertices.push_back(v[i]);
+		}
+		break;
 		case video::EVT_2TCOORDS:
-			{
-				const S3DVertex2TCoords* v =(const S3DVertex2TCoords*)original->getVertices();
+		{
+			const S3DVertex2TCoords* v = (const S3DVertex2TCoords*)original->getVertices();
 
-				for (u32 i=0; i < vtxCnt; ++i)
-					buffer->Vertices.push_back( S3DVertex(
-						v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords) );
-			}
-			break;
+			for (u32 i = 0; i < vtxCnt; ++i)
+				buffer->Vertices.push_back(S3DVertex(
+					v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords));
+		}
+		break;
 		case video::EVT_TANGENTS:
-			{
-				const S3DVertexTangents* v =(const S3DVertexTangents*)original->getVertices();
+		{
+			const S3DVertexTangents* v = (const S3DVertexTangents*)original->getVertices();
 
-				for (u32 i=0; i < vtxCnt; ++i)
-					buffer->Vertices.push_back( S3DVertex(
-						v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords) );
-			}
-			break;
+			for (u32 i = 0; i < vtxCnt; ++i)
+				buffer->Vertices.push_back(S3DVertex(
+					v[i].Pos, v[i].Normal, v[i].Color, v[i].TCoords));
+		}
+		break;
 		}
 
 		buffer->recalculateBoundingBox();
@@ -1491,7 +1491,7 @@ s32 CMeshManipulator::getPolyCount(scene::IMesh* mesh) const
 
 	s32 trianglecount = 0;
 
-	for (u32 g=0; g<mesh->getMeshBufferCount(); ++g)
+	for (u32 g = 0; g < mesh->getMeshBufferCount(); ++g)
 		trianglecount += mesh->getMeshBuffer(g)->getIndexCount() / 3;
 
 	return trianglecount;
@@ -1509,7 +1509,7 @@ s32 CMeshManipulator::getPolyCount(scene::IAnimatedMesh* mesh) const
 
 
 //! create a new AnimatedMesh and adds the mesh to it
-IAnimatedMesh * CMeshManipulator::createAnimatedMesh(scene::IMesh* mesh, scene::E_ANIMATED_MESH_TYPE type) const
+IAnimatedMesh* CMeshManipulator::createAnimatedMesh(scene::IMesh* mesh, scene::E_ANIMATED_MESH_TYPE type) const
 {
 	return new SAnimatedMesh(mesh, type);
 }
@@ -1534,7 +1534,7 @@ struct tcache
 
 const u16 cachesize = 32;
 
-float FindVertexScore(vcache *v)
+float FindVertexScore(vcache* v)
 {
 	const float CacheDecayPower = 1.5f;
 	const float LastTriScore = 0.75f;
@@ -1574,7 +1574,7 @@ float FindVertexScore(vcache *v)
 	// Bonus points for having a low number of tris still to
 	// use the vert, so we get rid of lone verts quickly.
 	float ValenceBoost = powf(v->NumActiveTris,
-				-ValenceBoostPower);
+							  -ValenceBoostPower);
 	Score += ValenceBoostScale * ValenceBoost;
 
 	return Score;
@@ -1588,7 +1588,7 @@ class f_lru
 {
 
 public:
-	f_lru(vcache *v, tcache *t): vc(v), tc(t)
+	f_lru(vcache* v, tcache* t) : vc(v), tc(t)
 	{
 		for (u16 i = 0; i < cachesize; i++)
 		{
@@ -1619,8 +1619,8 @@ public:
 
 		if (!found)
 		{
-			if (cache[cachesize-1] != -1)
-				vc[cache[cachesize-1]].cachepos = -1;
+			if (cache[cachesize - 1] != -1)
+				vc[cache[cachesize - 1]].cachepos = -1;
 
 			// Move everything down
 			for (u16 i = cachesize - 1; i; i--)
@@ -1655,7 +1655,7 @@ public:
 				const u16 trisize = vc[cache[i]].tris.size();
 				for (u16 t = 0; t < trisize; t++)
 				{
-					tcache *tri = &tc[vc[cache[i]].tris[t]];
+					tcache* tri = &tc[vc[cache[i]].tris[t]];
 
 					tri->score =
 						vc[tri->ind[0]].score +
@@ -1676,8 +1676,8 @@ public:
 
 private:
 	s32 cache[cachesize];
-	vcache *vc;
-	tcache *tc;
+	vcache* vc;
+	tcache* tc;
 };
 
 } // end anonymous namespace
@@ -1689,19 +1689,19 @@ http://home.comcast.net/~tom_forsyth/papers/fast_vert_cache_opt.html
 The function is thread-safe (read: you can optimize several meshes in different threads)
 
 \param mesh Source mesh for the operation.  */
-IMesh* CMeshManipulator::createForsythOptimizedMesh(const IMesh *mesh) const
+IMesh* CMeshManipulator::createForsythOptimizedMesh(const IMesh* mesh) const
 {
 	if (!mesh)
 		return 0;
 
-	SMesh *newmesh = new SMesh();
+	SMesh* newmesh = new SMesh();
 	newmesh->BoundingBox = mesh->getBoundingBox();
 
 	const u32 mbcount = mesh->getMeshBufferCount();
 
 	for (u32 b = 0; b < mbcount; ++b)
 	{
-		const IMeshBuffer *mb = mesh->getMeshBuffer(b);
+		const IMeshBuffer* mb = mesh->getMeshBuffer(b);
 
 		if (mb->getIndexType() != video::EIT_16BIT)
 		{
@@ -1713,10 +1713,10 @@ IMesh* CMeshManipulator::createForsythOptimizedMesh(const IMesh *mesh) const
 		const u32 icount = mb->getIndexCount();
 		const u32 tcount = icount / 3;
 		const u32 vcount = mb->getVertexCount();
-		const u16 *ind = mb->getIndices();
+		const u16* ind = mb->getIndices();
 
-		vcache *vc = new vcache[vcount];
-		tcache *tc = new tcache[tcount];
+		vcache* vc = new vcache[vcount];
+		tcache* tc = new tcache[tcount];
 
 		f_lru lru(vc, tc);
 
@@ -1735,7 +1735,7 @@ IMesh* CMeshManipulator::createForsythOptimizedMesh(const IMesh *mesh) const
 			vc[ind[i + 1]].NumActiveTris++;
 			vc[ind[i + 2]].NumActiveTris++;
 
-			const u32 tri_ind = i/3;
+			const u32 tri_ind = i / 3;
 			tc[tri_ind].ind[0] = ind[i];
 			tc[tri_ind].ind[1] = ind[i + 1];
 			tc[tri_ind].ind[2] = ind[i + 2];
@@ -1759,354 +1759,354 @@ IMesh* CMeshManipulator::createForsythOptimizedMesh(const IMesh *mesh) const
 		for (u32 i = 0; i < tcount; i++)
 		{
 			tc[i].score =
-					vc[tc[i].ind[0]].score +
-					vc[tc[i].ind[1]].score +
-					vc[tc[i].ind[2]].score;
+				vc[tc[i].ind[0]].score +
+				vc[tc[i].ind[1]].score +
+				vc[tc[i].ind[2]].score;
 		}
 
-		switch(mb->getVertexType())
+		switch (mb->getVertexType())
 		{
-			case video::EVT_STANDARD:
+		case video::EVT_STANDARD:
+		{
+			video::S3DVertex* v = (video::S3DVertex*)mb->getVertices();
+
+			SMeshBuffer* buf = new SMeshBuffer();
+			buf->Material = mb->getMaterial();
+
+			buf->Vertices.reallocate(vcount);
+			buf->Indices.reallocate(icount);
+
+			core::map<const video::S3DVertex, const u16> sind; // search index for fast operation
+			typedef core::map<const video::S3DVertex, const u16>::Node snode;
+
+			// Main algorithm
+			u32 highest = 0;
+			u32 drawcalls = 0;
+			for (;;)
 			{
-				video::S3DVertex *v = (video::S3DVertex *) mb->getVertices();
-
-				SMeshBuffer *buf = new SMeshBuffer();
-				buf->Material = mb->getMaterial();
-
-				buf->Vertices.reallocate(vcount);
-				buf->Indices.reallocate(icount);
-
-				core::map<const video::S3DVertex, const u16> sind; // search index for fast operation
-				typedef core::map<const video::S3DVertex, const u16>::Node snode;
-
-				// Main algorithm
-				u32 highest = 0;
-				u32 drawcalls = 0;
-				for (;;)
+				if (tc[highest].drawn)
 				{
-					if (tc[highest].drawn)
+					bool found = false;
+					float hiscore = 0;
+					for (u32 t = 0; t < tcount; t++)
 					{
-						bool found = false;
-						float hiscore = 0;
-						for (u32 t = 0; t < tcount; t++)
+						if (!tc[t].drawn)
 						{
-							if (!tc[t].drawn)
+							if (tc[t].score > hiscore)
 							{
-								if (tc[t].score > hiscore)
-								{
-									highest = t;
-									hiscore = tc[t].score;
-									found = true;
-								}
-							}
-						}
-						if (!found)
-							break;
-					}
-
-					// Output the best triangle
-					u16 newind = buf->Vertices.size();
-
-					snode *s = sind.find(v[tc[highest].ind[0]]);
-
-					if (!s)
-					{
-						buf->Vertices.push_back(v[tc[highest].ind[0]]);
-						buf->Indices.push_back(newind);
-						sind.insert(v[tc[highest].ind[0]], newind);
-						newind++;
-					}
-					else
-					{
-						buf->Indices.push_back(s->getValue());
-					}
-
-					s = sind.find(v[tc[highest].ind[1]]);
-
-					if (!s)
-					{
-						buf->Vertices.push_back(v[tc[highest].ind[1]]);
-						buf->Indices.push_back(newind);
-						sind.insert(v[tc[highest].ind[1]], newind);
-						newind++;
-					}
-					else
-					{
-						buf->Indices.push_back(s->getValue());
-					}
-
-					s = sind.find(v[tc[highest].ind[2]]);
-
-					if (!s)
-					{
-						buf->Vertices.push_back(v[tc[highest].ind[2]]);
-						buf->Indices.push_back(newind);
-						sind.insert(v[tc[highest].ind[2]], newind);
-					}
-					else
-					{
-						buf->Indices.push_back(s->getValue());
-					}
-
-					vc[tc[highest].ind[0]].NumActiveTris--;
-					vc[tc[highest].ind[1]].NumActiveTris--;
-					vc[tc[highest].ind[2]].NumActiveTris--;
-
-					tc[highest].drawn = true;
-
-					for (u16 j = 0; j < 3; j++)
-					{
-						vcache *vert = &vc[tc[highest].ind[j]];
-						for (u16 t = 0; t < vert->tris.size(); t++)
-						{
-							if (highest == vert->tris[t])
-							{
-								vert->tris.erase(t);
-								break;
+								highest = t;
+								hiscore = tc[t].score;
+								found = true;
 							}
 						}
 					}
-
-					lru.add(tc[highest].ind[0]);
-					lru.add(tc[highest].ind[1]);
-					highest = lru.add(tc[highest].ind[2], true);
-					drawcalls++;
+					if (!found)
+						break;
 				}
 
-				buf->setBoundingBox(mb->getBoundingBox());
-				newmesh->addMeshBuffer(buf);
-				buf->drop();
-			}
-			break;
-			case video::EVT_2TCOORDS:
-			{
-				video::S3DVertex2TCoords *v = (video::S3DVertex2TCoords *) mb->getVertices();
+				// Output the best triangle
+				u16 newind = buf->Vertices.size();
 
-				SMeshBufferLightMap *buf = new SMeshBufferLightMap();
-				buf->Material = mb->getMaterial();
+				snode* s = sind.find(v[tc[highest].ind[0]]);
 
-				buf->Vertices.reallocate(vcount);
-				buf->Indices.reallocate(icount);
-
-				core::map<const video::S3DVertex2TCoords, const u16> sind; // search index for fast operation
-				typedef core::map<const video::S3DVertex2TCoords, const u16>::Node snode;
-
-				// Main algorithm
-				u32 highest = 0;
-				u32 drawcalls = 0;
-				for (;;)
+				if (!s)
 				{
-					if (tc[highest].drawn)
-					{
-						bool found = false;
-						float hiscore = 0;
-						for (u32 t = 0; t < tcount; t++)
-						{
-							if (!tc[t].drawn)
-							{
-								if (tc[t].score > hiscore)
-								{
-									highest = t;
-									hiscore = tc[t].score;
-									found = true;
-								}
-							}
-						}
-						if (!found)
-							break;
-					}
-
-					// Output the best triangle
-					u16 newind = buf->Vertices.size();
-
-					snode *s = sind.find(v[tc[highest].ind[0]]);
-
-					if (!s)
-					{
-						buf->Vertices.push_back(v[tc[highest].ind[0]]);
-						buf->Indices.push_back(newind);
-						sind.insert(v[tc[highest].ind[0]], newind);
-						newind++;
-					}
-					else
-					{
-						buf->Indices.push_back(s->getValue());
-					}
-
-					s = sind.find(v[tc[highest].ind[1]]);
-
-					if (!s)
-					{
-						buf->Vertices.push_back(v[tc[highest].ind[1]]);
-						buf->Indices.push_back(newind);
-						sind.insert(v[tc[highest].ind[1]], newind);
-						newind++;
-					}
-					else
-					{
-						buf->Indices.push_back(s->getValue());
-					}
-
-					s = sind.find(v[tc[highest].ind[2]]);
-
-					if (!s)
-					{
-						buf->Vertices.push_back(v[tc[highest].ind[2]]);
-						buf->Indices.push_back(newind);
-						sind.insert(v[tc[highest].ind[2]], newind);
-					}
-					else
-					{
-						buf->Indices.push_back(s->getValue());
-					}
-
-					vc[tc[highest].ind[0]].NumActiveTris--;
-					vc[tc[highest].ind[1]].NumActiveTris--;
-					vc[tc[highest].ind[2]].NumActiveTris--;
-
-					tc[highest].drawn = true;
-
-					for (u16 j = 0; j < 3; j++)
-					{
-						vcache *vert = &vc[tc[highest].ind[j]];
-						for (u16 t = 0; t < vert->tris.size(); t++)
-						{
-							if (highest == vert->tris[t])
-							{
-								vert->tris.erase(t);
-								break;
-							}
-						}
-					}
-
-					lru.add(tc[highest].ind[0]);
-					lru.add(tc[highest].ind[1]);
-					highest = lru.add(tc[highest].ind[2]);
-					drawcalls++;
+					buf->Vertices.push_back(v[tc[highest].ind[0]]);
+					buf->Indices.push_back(newind);
+					sind.insert(v[tc[highest].ind[0]], newind);
+					newind++;
+				}
+				else
+				{
+					buf->Indices.push_back(s->getValue());
 				}
 
-				buf->setBoundingBox(mb->getBoundingBox());
-				newmesh->addMeshBuffer(buf);
-				buf->drop();
+				s = sind.find(v[tc[highest].ind[1]]);
 
-			}
-			break;
-			case video::EVT_TANGENTS:
-			{
-				video::S3DVertexTangents *v = (video::S3DVertexTangents *) mb->getVertices();
-
-				SMeshBufferTangents *buf = new SMeshBufferTangents();
-				buf->Material = mb->getMaterial();
-
-				buf->Vertices.reallocate(vcount);
-				buf->Indices.reallocate(icount);
-
-				core::map<const video::S3DVertexTangents, const u16> sind; // search index for fast operation
-				typedef core::map<const video::S3DVertexTangents, const u16>::Node snode;
-
-				// Main algorithm
-				u32 highest = 0;
-				u32 drawcalls = 0;
-				for (;;)
+				if (!s)
 				{
-					if (tc[highest].drawn)
-					{
-						bool found = false;
-						float hiscore = 0;
-						for (u32 t = 0; t < tcount; t++)
-						{
-							if (!tc[t].drawn)
-							{
-								if (tc[t].score > hiscore)
-								{
-									highest = t;
-									hiscore = tc[t].score;
-									found = true;
-								}
-							}
-						}
-						if (!found)
-							break;
-					}
-
-					// Output the best triangle
-					u16 newind = buf->Vertices.size();
-
-					snode *s = sind.find(v[tc[highest].ind[0]]);
-
-					if (!s)
-					{
-						buf->Vertices.push_back(v[tc[highest].ind[0]]);
-						buf->Indices.push_back(newind);
-						sind.insert(v[tc[highest].ind[0]], newind);
-						newind++;
-					}
-					else
-					{
-						buf->Indices.push_back(s->getValue());
-					}
-
-					s = sind.find(v[tc[highest].ind[1]]);
-
-					if (!s)
-					{
-						buf->Vertices.push_back(v[tc[highest].ind[1]]);
-						buf->Indices.push_back(newind);
-						sind.insert(v[tc[highest].ind[1]], newind);
-						newind++;
-					}
-					else
-					{
-						buf->Indices.push_back(s->getValue());
-					}
-
-					s = sind.find(v[tc[highest].ind[2]]);
-
-					if (!s)
-					{
-						buf->Vertices.push_back(v[tc[highest].ind[2]]);
-						buf->Indices.push_back(newind);
-						sind.insert(v[tc[highest].ind[2]], newind);
-					}
-					else
-					{
-						buf->Indices.push_back(s->getValue());
-					}
-
-					vc[tc[highest].ind[0]].NumActiveTris--;
-					vc[tc[highest].ind[1]].NumActiveTris--;
-					vc[tc[highest].ind[2]].NumActiveTris--;
-
-					tc[highest].drawn = true;
-
-					for (u16 j = 0; j < 3; j++)
-					{
-						vcache *vert = &vc[tc[highest].ind[j]];
-						for (u16 t = 0; t < vert->tris.size(); t++)
-						{
-							if (highest == vert->tris[t])
-							{
-								vert->tris.erase(t);
-								break;
-							}
-						}
-					}
-
-					lru.add(tc[highest].ind[0]);
-					lru.add(tc[highest].ind[1]);
-					highest = lru.add(tc[highest].ind[2]);
-					drawcalls++;
+					buf->Vertices.push_back(v[tc[highest].ind[1]]);
+					buf->Indices.push_back(newind);
+					sind.insert(v[tc[highest].ind[1]], newind);
+					newind++;
+				}
+				else
+				{
+					buf->Indices.push_back(s->getValue());
 				}
 
-				buf->setBoundingBox(mb->getBoundingBox());
-				newmesh->addMeshBuffer(buf);
-				buf->drop();
+				s = sind.find(v[tc[highest].ind[2]]);
+
+				if (!s)
+				{
+					buf->Vertices.push_back(v[tc[highest].ind[2]]);
+					buf->Indices.push_back(newind);
+					sind.insert(v[tc[highest].ind[2]], newind);
+				}
+				else
+				{
+					buf->Indices.push_back(s->getValue());
+				}
+
+				vc[tc[highest].ind[0]].NumActiveTris--;
+				vc[tc[highest].ind[1]].NumActiveTris--;
+				vc[tc[highest].ind[2]].NumActiveTris--;
+
+				tc[highest].drawn = true;
+
+				for (u16 j = 0; j < 3; j++)
+				{
+					vcache* vert = &vc[tc[highest].ind[j]];
+					for (u16 t = 0; t < vert->tris.size(); t++)
+					{
+						if (highest == vert->tris[t])
+						{
+							vert->tris.erase(t);
+							break;
+						}
+					}
+				}
+
+				lru.add(tc[highest].ind[0]);
+				lru.add(tc[highest].ind[1]);
+				highest = lru.add(tc[highest].ind[2], true);
+				drawcalls++;
 			}
-			break;
+
+			buf->setBoundingBox(mb->getBoundingBox());
+			newmesh->addMeshBuffer(buf);
+			buf->drop();
+		}
+		break;
+		case video::EVT_2TCOORDS:
+		{
+			video::S3DVertex2TCoords* v = (video::S3DVertex2TCoords*)mb->getVertices();
+
+			SMeshBufferLightMap* buf = new SMeshBufferLightMap();
+			buf->Material = mb->getMaterial();
+
+			buf->Vertices.reallocate(vcount);
+			buf->Indices.reallocate(icount);
+
+			core::map<const video::S3DVertex2TCoords, const u16> sind; // search index for fast operation
+			typedef core::map<const video::S3DVertex2TCoords, const u16>::Node snode;
+
+			// Main algorithm
+			u32 highest = 0;
+			u32 drawcalls = 0;
+			for (;;)
+			{
+				if (tc[highest].drawn)
+				{
+					bool found = false;
+					float hiscore = 0;
+					for (u32 t = 0; t < tcount; t++)
+					{
+						if (!tc[t].drawn)
+						{
+							if (tc[t].score > hiscore)
+							{
+								highest = t;
+								hiscore = tc[t].score;
+								found = true;
+							}
+						}
+					}
+					if (!found)
+						break;
+				}
+
+				// Output the best triangle
+				u16 newind = buf->Vertices.size();
+
+				snode* s = sind.find(v[tc[highest].ind[0]]);
+
+				if (!s)
+				{
+					buf->Vertices.push_back(v[tc[highest].ind[0]]);
+					buf->Indices.push_back(newind);
+					sind.insert(v[tc[highest].ind[0]], newind);
+					newind++;
+				}
+				else
+				{
+					buf->Indices.push_back(s->getValue());
+				}
+
+				s = sind.find(v[tc[highest].ind[1]]);
+
+				if (!s)
+				{
+					buf->Vertices.push_back(v[tc[highest].ind[1]]);
+					buf->Indices.push_back(newind);
+					sind.insert(v[tc[highest].ind[1]], newind);
+					newind++;
+				}
+				else
+				{
+					buf->Indices.push_back(s->getValue());
+				}
+
+				s = sind.find(v[tc[highest].ind[2]]);
+
+				if (!s)
+				{
+					buf->Vertices.push_back(v[tc[highest].ind[2]]);
+					buf->Indices.push_back(newind);
+					sind.insert(v[tc[highest].ind[2]], newind);
+				}
+				else
+				{
+					buf->Indices.push_back(s->getValue());
+				}
+
+				vc[tc[highest].ind[0]].NumActiveTris--;
+				vc[tc[highest].ind[1]].NumActiveTris--;
+				vc[tc[highest].ind[2]].NumActiveTris--;
+
+				tc[highest].drawn = true;
+
+				for (u16 j = 0; j < 3; j++)
+				{
+					vcache* vert = &vc[tc[highest].ind[j]];
+					for (u16 t = 0; t < vert->tris.size(); t++)
+					{
+						if (highest == vert->tris[t])
+						{
+							vert->tris.erase(t);
+							break;
+						}
+					}
+				}
+
+				lru.add(tc[highest].ind[0]);
+				lru.add(tc[highest].ind[1]);
+				highest = lru.add(tc[highest].ind[2]);
+				drawcalls++;
+			}
+
+			buf->setBoundingBox(mb->getBoundingBox());
+			newmesh->addMeshBuffer(buf);
+			buf->drop();
+
+		}
+		break;
+		case video::EVT_TANGENTS:
+		{
+			video::S3DVertexTangents* v = (video::S3DVertexTangents*)mb->getVertices();
+
+			SMeshBufferTangents* buf = new SMeshBufferTangents();
+			buf->Material = mb->getMaterial();
+
+			buf->Vertices.reallocate(vcount);
+			buf->Indices.reallocate(icount);
+
+			core::map<const video::S3DVertexTangents, const u16> sind; // search index for fast operation
+			typedef core::map<const video::S3DVertexTangents, const u16>::Node snode;
+
+			// Main algorithm
+			u32 highest = 0;
+			u32 drawcalls = 0;
+			for (;;)
+			{
+				if (tc[highest].drawn)
+				{
+					bool found = false;
+					float hiscore = 0;
+					for (u32 t = 0; t < tcount; t++)
+					{
+						if (!tc[t].drawn)
+						{
+							if (tc[t].score > hiscore)
+							{
+								highest = t;
+								hiscore = tc[t].score;
+								found = true;
+							}
+						}
+					}
+					if (!found)
+						break;
+				}
+
+				// Output the best triangle
+				u16 newind = buf->Vertices.size();
+
+				snode* s = sind.find(v[tc[highest].ind[0]]);
+
+				if (!s)
+				{
+					buf->Vertices.push_back(v[tc[highest].ind[0]]);
+					buf->Indices.push_back(newind);
+					sind.insert(v[tc[highest].ind[0]], newind);
+					newind++;
+				}
+				else
+				{
+					buf->Indices.push_back(s->getValue());
+				}
+
+				s = sind.find(v[tc[highest].ind[1]]);
+
+				if (!s)
+				{
+					buf->Vertices.push_back(v[tc[highest].ind[1]]);
+					buf->Indices.push_back(newind);
+					sind.insert(v[tc[highest].ind[1]], newind);
+					newind++;
+				}
+				else
+				{
+					buf->Indices.push_back(s->getValue());
+				}
+
+				s = sind.find(v[tc[highest].ind[2]]);
+
+				if (!s)
+				{
+					buf->Vertices.push_back(v[tc[highest].ind[2]]);
+					buf->Indices.push_back(newind);
+					sind.insert(v[tc[highest].ind[2]], newind);
+				}
+				else
+				{
+					buf->Indices.push_back(s->getValue());
+				}
+
+				vc[tc[highest].ind[0]].NumActiveTris--;
+				vc[tc[highest].ind[1]].NumActiveTris--;
+				vc[tc[highest].ind[2]].NumActiveTris--;
+
+				tc[highest].drawn = true;
+
+				for (u16 j = 0; j < 3; j++)
+				{
+					vcache* vert = &vc[tc[highest].ind[j]];
+					for (u16 t = 0; t < vert->tris.size(); t++)
+					{
+						if (highest == vert->tris[t])
+						{
+							vert->tris.erase(t);
+							break;
+						}
+					}
+				}
+
+				lru.add(tc[highest].ind[0]);
+				lru.add(tc[highest].ind[1]);
+				highest = lru.add(tc[highest].ind[2]);
+				drawcalls++;
+			}
+
+			buf->setBoundingBox(mb->getBoundingBox());
+			newmesh->addMeshBuffer(buf);
+			buf->drop();
+		}
+		break;
 		}
 
-		delete [] vc;
-		delete [] tc;
+		delete[] vc;
+		delete[] tc;
 
 	} // for each meshbuffer
 

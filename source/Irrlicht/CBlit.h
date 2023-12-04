@@ -1002,7 +1002,7 @@ static void executeBlit_TextureCombineColor_16_to_16( const SBlitJob * job )
 		{
 			const u16 src_x = src[dx] << 8 | src[dx+1];
 			const u16 dst_x = dst[dx] << 8 | dst[dx+1];
-			dst[dx] = PixelCombine16( dst_x, PixelMul16_2( src_x, jobColor ) );
+			dst[dx] = (u8)PixelCombine16( dst_x, PixelMul16_2( src_x, jobColor ) );
 		}
 		src = (src) + job->srcPitch;
 		dst = (dst) + job->dstPitch;

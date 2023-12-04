@@ -210,6 +210,11 @@ int main()
 
 	while(device->run())
 	{
+		if (!device->isWindowActive())
+		{
+			device->yield();
+			continue;
+		}
 		// Work out a frame delta time.
 		const u32 now = device->getTimer()->getTime();
 		const f32 frameDeltaTime = (f32)(now - then) / 1000.f; // Time in seconds

@@ -14,13 +14,13 @@ namespace scene
 
 //! constructor
 CBoneSceneNode::CBoneSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
-	u32 boneIndex, const c8* boneName)
-: IBoneSceneNode(parent, mgr, id), BoneIndex(boneIndex),
+							   u32 boneIndex, const c8* boneName)
+	: IBoneSceneNode(parent, mgr, id), BoneIndex(boneIndex),
 	AnimationMode(EBAM_AUTOMATIC), SkinningSpace(EBSS_LOCAL)
 {
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	setDebugName("CBoneSceneNode");
-	#endif
+#endif
 	setName(boneName);
 }
 
@@ -84,21 +84,21 @@ void CBoneSceneNode::OnAnimate(u32 timeMs)
 }
 
 
-void CBoneSceneNode::helper_updateAbsolutePositionOfAllChildren(ISceneNode *Node)
+void CBoneSceneNode::helper_updateAbsolutePositionOfAllChildren(ISceneNode* Node)
 {
 	Node->updateAbsolutePosition();
 
 	ISceneNodeList::ConstIterator it = Node->getChildren().begin();
 	for (; it != Node->getChildren().end(); ++it)
 	{
-		helper_updateAbsolutePositionOfAllChildren( (*it) );
+		helper_updateAbsolutePositionOfAllChildren((*it));
 	}
 }
 
 
 void CBoneSceneNode::updateAbsolutePositionOfAllChildren()
 {
-	helper_updateAbsolutePositionOfAllChildren( this );
+	helper_updateAbsolutePositionOfAllChildren(this);
 }
 
 

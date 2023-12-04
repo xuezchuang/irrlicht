@@ -240,6 +240,11 @@ int main()
 	u32 frames=0;
 	while(device->run())
 	{
+		if (!device->isWindowActive())
+		{
+			device->yield();
+			continue;
+		}
 		driver->beginScene(video::ECBF_COLOR | video::ECBF_DEPTH, video::SColor(0,100,100,100));
 
 		smgr->drawAll();

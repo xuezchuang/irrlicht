@@ -31,8 +31,8 @@ namespace irr
 
 #if defined(_IRR_COMPILE_WITH_X11_DEVICE_)
 // constructor  linux
-	COSOperator::COSOperator(const core::stringc& osVersion, CIrrDeviceLinux* device)
-: OperatingSystem(osVersion), IrrDeviceLinux(device)
+COSOperator::COSOperator(const core::stringc& osVersion, CIrrDeviceLinux* device)
+	: OperatingSystem(osVersion), IrrDeviceLinux(device)
 {
 }
 #endif
@@ -40,9 +40,9 @@ namespace irr
 // constructor
 COSOperator::COSOperator(const core::stringc& osVersion) : OperatingSystem(osVersion)
 {
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	setDebugName("COSOperator");
-	#endif
+#endif
 }
 
 
@@ -56,10 +56,10 @@ const core::stringc& COSOperator::getOperatingSystemVersion() const
 //! copies text to the clipboard
 void COSOperator::copyToClipboard(const c8* text) const
 {
-	if (strlen(text)==0)
+	if (strlen(text) == 0)
 		return;
 
-// Windows version
+	// Windows version
 #if defined(_IRR_XBOX_PLATFORM_)
 #elif defined(_IRR_WINDOWS_API_)
 	if (!OpenClipboard(NULL) || text == 0)
@@ -68,9 +68,9 @@ void COSOperator::copyToClipboard(const c8* text) const
 	EmptyClipboard();
 
 	HGLOBAL clipbuffer;
-	char * buffer;
+	char* buffer;
 
-	clipbuffer = GlobalAlloc(GMEM_DDESHARE, strlen(text)+1);
+	clipbuffer = GlobalAlloc(GMEM_DDESHARE, strlen(text) + 1);
 	buffer = (char*)GlobalLock(clipbuffer);
 
 	strcpy(buffer, text);
@@ -80,20 +80,20 @@ void COSOperator::copyToClipboard(const c8* text) const
 	CloseClipboard();
 
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-    NSString *str = nil;
-    NSPasteboard *board = nil;
+	NSString* str = nil;
+	NSPasteboard* board = nil;
 
-    if ((text != NULL) && (strlen(text) > 0))
-    {
-        str = [NSString stringWithCString:text encoding:NSWindowsCP1252StringEncoding];
-        board = [NSPasteboard generalPasteboard];
-        [board declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:NSApp];
-        [board setString:str forType:NSStringPboardType];
-    }
+	if ((text != NULL) && (strlen(text) > 0))
+	{
+		str = [NSString stringWithCString : text encoding : NSWindowsCP1252StringEncoding];
+		board = [NSPasteboard generalPasteboard];
+		[board declareTypes : [NSArray arrayWithObject : NSStringPboardType] owner : NSApp] ;
+		[board setString : str forType : NSStringPboardType] ;
+	}
 
 #elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
-    if ( IrrDeviceLinux )
-        IrrDeviceLinux->copyToClipboard(text);
+	if (IrrDeviceLinux)
+		IrrDeviceLinux->copyToClipboard(text);
 #else
 
 #endif
@@ -105,36 +105,36 @@ void COSOperator::copyToClipboard(const c8* text) const
 const c8* COSOperator::getTextFromClipboard() const
 {
 #if defined(_IRR_XBOX_PLATFORM_)
-		return 0;
+	return 0;
 #elif defined(_IRR_WINDOWS_API_)
 	if (!OpenClipboard(NULL))
 		return 0;
 
-	char * buffer = 0;
+	char* buffer = 0;
 
-	HANDLE hData = GetClipboardData( CF_TEXT );
-	buffer = (char*)GlobalLock( hData );
-	GlobalUnlock( hData );
+	HANDLE hData = GetClipboardData(CF_TEXT);
+	buffer = (char*)GlobalLock(hData);
+	GlobalUnlock(hData);
 	CloseClipboard();
 	return buffer;
 
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
-    NSString* str = nil;
-    NSPasteboard* board = nil;
-    char* result = 0;
+	NSString* str = nil;
+	NSPasteboard* board = nil;
+	char* result = 0;
 
-    board = [NSPasteboard generalPasteboard];
-    str = [board stringForType:NSStringPboardType];
+	board = [NSPasteboard generalPasteboard];
+	str = [board stringForType : NSStringPboardType];
 
-    if (str != nil)
-        result = (char*)[str cStringUsingEncoding:NSWindowsCP1252StringEncoding];
+	if (str != nil)
+		result = (char*)[str cStringUsingEncoding : NSWindowsCP1252StringEncoding];
 
-    return (result);
+	return (result);
 
 #elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
-    if ( IrrDeviceLinux )
-        return IrrDeviceLinux->getTextFromClipboard();
-    return 0;
+	if (IrrDeviceLinux)
+		return IrrDeviceLinux->getTextFromClipboard();
+	return 0;
 
 #else
 
@@ -146,16 +146,16 @@ const c8* COSOperator::getTextFromClipboard() const
 bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
 {
 	if (MHz)
-		*MHz=0;
+		*MHz = 0;
 #if defined(_IRR_WINDOWS_API_) && !defined(_WIN32_WCE ) && !defined (_IRR_XBOX_PLATFORM_)
 	LONG Error;
 
 	HKEY Key;
 	Error = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-			__TEXT("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"),
-			0, KEY_READ, &Key);
+						 __TEXT("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"),
+						 0, KEY_READ, &Key);
 
-	if(Error != ERROR_SUCCESS)
+	if (Error != ERROR_SUCCESS)
 		return false;
 
 	DWORD Speed = 0;
@@ -186,7 +186,7 @@ bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
 	{
 		char buffer[1024];
 		fread(buffer, 1, 1024, file);
-		buffer[1023]=0;
+		buffer[1023] = 0;
 		core::stringc str(buffer);
 		s32 pos = str.find("cpu MHz");
 		if (pos != -1)
@@ -194,8 +194,8 @@ bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
 			pos = str.findNext(':', pos);
 			if (pos != -1)
 			{
-				while ( str[++pos] == ' ' );
-				*MHz = core::fast_atof(str.c_str()+pos);
+				while (str[++pos] == ' ');
+				*MHz = core::fast_atof(str.c_str() + pos);
 			}
 		}
 		fclose(file);
@@ -208,45 +208,45 @@ bool COSOperator::getSystemMemory(u32* Total, u32* Avail) const
 {
 #if defined(_IRR_WINDOWS_API_) && !defined (_IRR_XBOX_PLATFORM_)
 
-    #if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= 0x0500)
 	MEMORYSTATUSEX MemoryStatusEx;
- 	MemoryStatusEx.dwLength = sizeof(MEMORYSTATUSEX);
+	MemoryStatusEx.dwLength = sizeof(MEMORYSTATUSEX);
 
 	// cannot fail
 	GlobalMemoryStatusEx(&MemoryStatusEx);
 
 	if (Total)
-		*Total = (u32)(MemoryStatusEx.ullTotalPhys>>10);
+		*Total = (u32)(MemoryStatusEx.ullTotalPhys >> 10);
 	if (Avail)
-		*Avail = (u32)(MemoryStatusEx.ullAvailPhys>>10);
+		*Avail = (u32)(MemoryStatusEx.ullAvailPhys >> 10);
 	return true;
-	#else
+#else
 	MEMORYSTATUS MemoryStatus;
 	MemoryStatus.dwLength = sizeof(MEMORYSTATUS);
 
- 	// cannot fail
+	// cannot fail
 	GlobalMemoryStatus(&MemoryStatus);
 
- 	if (Total)
-		*Total = (u32)(MemoryStatus.dwTotalPhys>>10);
- 	if (Avail)
-		*Avail = (u32)(MemoryStatus.dwAvailPhys>>10);
-    return true;
-	#endif
+	if (Total)
+		*Total = (u32)(MemoryStatus.dwTotalPhys >> 10);
+	if (Avail)
+		*Avail = (u32)(MemoryStatus.dwAvailPhys >> 10);
+	return true;
+#endif
 
 #elif defined(_IRR_POSIX_API_) && !defined(__FreeBSD__)
 #if defined(_SC_PHYS_PAGES) && defined(_SC_AVPHYS_PAGES)
-        long ps = sysconf(_SC_PAGESIZE);
-        long pp = sysconf(_SC_PHYS_PAGES);
-        long ap = sysconf(_SC_AVPHYS_PAGES);
+	long ps = sysconf(_SC_PAGESIZE);
+	long pp = sysconf(_SC_PHYS_PAGES);
+	long ap = sysconf(_SC_AVPHYS_PAGES);
 
-	if ((ps==-1)||(pp==-1)||(ap==-1))
+	if ((ps == -1) || (pp == -1) || (ap == -1))
 		return false;
 
 	if (Total)
-		*Total = (u32)((ps*(long long)pp)>>10);
+		*Total = (u32)((ps * (long long)pp) >> 10);
 	if (Avail)
-		*Avail = (u32)((ps*(long long)ap)>>10);
+		*Avail = (u32)((ps * (long long)ap) >> 10);
 	return true;
 #else
 	// TODO: implement for non-availability of symbols/features

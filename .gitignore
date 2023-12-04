@@ -1,0 +1,6 @@
+/bin
+.vs
+obj
+x64
+*.user
+/examples/22.MaterialViewer/Debug/*.pdb
